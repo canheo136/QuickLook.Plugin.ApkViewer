@@ -1,0 +1,1 @@
+### Required <https://github.com/QL-Win/QuickLook.Common>
