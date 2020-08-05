@@ -2,45 +2,91 @@
 
 namespace AAPTForNet {
     /// <summary>
-    /// Parse all messages from AAPTool
+    /// Parse output messages from AAPTool
     /// </summary>
     internal class ApkParser {
 
-        private static readonly string SDKPattern = @"sdkVersion:'[0-9]{0,1}[^']";
-        private static readonly string IconPattern = @"icon='[\w-.\\\/]*[^']";
-        private static readonly string AppNamePattern = @"label='[\w-.() \\\/\[\]]*[^']";
-        private static readonly string PackagePattern = @"name='[\w.]*[^']";
-        private static readonly string VersionPattern = @"versionName='[\w-.() \/]*[^']";
         protected ApkParser() { }
 
         public static ApkInfo Parse(DumpModel model) {
-            if(!model.isSuccess)
-                return new ApkInfo("", string.Join("\n", model.Messages), "", "", SDKInfo.Unknown, "");
+            if (!model.isSuccess)
+                return ApkInfo.Empty;
 
-            // Extract info from apk
-            string name = "", package = "", ver = "", sdk = "", icon = "";
+            var permissions = new System.Collections.Generic.List<string>();
+            var supportScrs = new System.Collections.Generic.List<string>();
+
+            string ver = string.Empty,
+                minSDK = string.Empty,
+                targetSDK = string.Empty,
+                icon = string.Empty,
+                name = string.Empty,
+                per = string.Empty,
+                package = string.Empty;
+            
             
             foreach(string msg in model.Messages) {
                 if(msg.StartsWith("application:")) {
-                    icon = splitValueFromString(msg, IconPattern);
-                    name = splitValueFromString(msg, AppNamePattern);
+                    icon = splitValueFromString(msg, @"icon='[\w-.\\\/]*[^']");
+                    name = splitValueFromString(msg, @"label='[\w-.() \\\/\[\]]*[^']");
+                    continue;
                 }
-                else if(msg.StartsWith("package:")) {
-                    ver = splitValueFromString(msg, VersionPattern);
-                    package = splitValueFromString(msg, PackagePattern);
+
+                if (msg.StartsWith("package:")) {
+                    ver = splitValueFromString(msg, @"versionName='[\w-.() \/]*[^']");
+                    package = splitValueFromString(msg, @"name='[\w.]*[^']");
+                    continue;
                 }
-                else if(msg.StartsWith("sdkVersion:")) {
-                    sdk = splitValueFromString(msg, SDKPattern);
+
+                if (msg.StartsWith("sdkVersion:")) {
+                    minSDK = splitValueFromString(msg, @"sdkVersion:'[0-9]{0,1}[^']");
+                    continue;
                 }
-                else continue;
+
+                if (msg.StartsWith("targetSdkVersion:")) {
+                    targetSDK = splitValueFromString(msg, @"targetSdkVersion:'[0-9]{0,1}[^']");
+                    continue;
+                }
+
+                if (msg.StartsWith("uses-permission:")) {
+                    per = splitValueFromString(msg, @"'([A-Z0-9._])*");
+                    permissions.Add(per);
+                    continue;
+                }
+
+                if (msg.StartsWith("supports-screens:")) {
+                    if (msg.Contains(ApkInfo.SmallScreen)) {
+                        supportScrs.Add(ApkInfo.SmallScreen);
+                    }
+                    if (msg.Contains(ApkInfo.NormalScreen)) {
+                        supportScrs.Add(ApkInfo.NormalScreen);
+                    }
+                    if (msg.Contains(ApkInfo.LargeScreen)) {
+                        supportScrs.Add(ApkInfo.LargeScreen);
+                    }
+                    if (msg.Contains(ApkInfo.xLargeScreen)) {
+                        supportScrs.Add(ApkInfo.xLargeScreen);
+                    }
+                    continue;
+                }
             }
             
-            return new ApkInfo(model.FilePath, name, package, ver, SDKInfo.GetInfo(sdk), icon);
+            return new ApkInfo() {
+                FullPath = model.FilePath,
+                AppName = name,
+                PackageName = package,
+                Version = ver,
+                MinSDK = SDKInfo.GetInfo(minSDK),
+                TargetSDK = SDKInfo.GetInfo(targetSDK),
+                IconName = icon,
+                Permissions = permissions,
+                SupportScreens = supportScrs
+            };
         }
 
         private static string splitValueFromString(string source, string pattern) {
-            string temp = Regex.Match(source, pattern).Value;
+            string temp = Regex.Match(source, pattern, RegexOptions.IgnoreCase).Value;
             return temp.Substring(temp.IndexOf("'") + 1);
         }
     }
 }
+

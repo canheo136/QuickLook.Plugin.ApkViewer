@@ -12,7 +12,7 @@ namespace QuickLook.Plugin.ApkViewer {
 
         public void Prepare(string path, ContextObject context) {
             context.Theme = Themes.Dark;
-            context.PreferredSize = new Size { Width = 650, Height = 200 };
+            context.PreferredSize = new Size { Width = 750, Height = 350 };
             context.Title = path;
             context.TitlebarOverlap = false;
             context.TitlebarBlurVisibility = false;
@@ -22,9 +22,9 @@ namespace QuickLook.Plugin.ApkViewer {
 
         public void View(string path, ContextObject context) {
             var apk = AAPTool.Decompile(path);
-            if (apk.isEmpty) {
+            if (apk.IsEmpty) {
                 context.ViewerContent = new System.Windows.Controls.Label() {
-                    Content = "Can't not load package. Please change the file name and try again.",
+                    Content = "Can't not load package.",
                     Foreground = System.Windows.Media.Brushes.White,
                     FontSize = 16,
                     VerticalAlignment = VerticalAlignment.Center,

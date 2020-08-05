@@ -15,12 +15,12 @@ namespace AAPTForNet {
 
             using(var archive = ZipFile.OpenRead(model.FilePath)) {
                 ZipArchiveEntry entry;
-                int max = archive.Entries.Count - 1;
+                int i = archive.Entries.Count - 1;
                 
                 // Loop from bottom of the collection.
                 // The largest icon is usually position at the end of package
                 // (sorting by alphabet)
-                for(int i = max; i > 0; i--) {
+                for(; i > 0; i--) {
                     entry = archive.Entries[i];
 
                     if(entry.Name.Equals(apk.IconName)) {
@@ -34,14 +34,9 @@ namespace AAPTForNet {
                 }
             }
 
-            return new ApkInfo(
-                model.FilePath,
-                apk.AppName, 
-                apk.PackageName, 
-                apk.Version, 
-                apk.MinSDK, 
-                hasIcon ? iconName : string.Empty
-            );
+            apk.IconName = hasIcon ? iconName : string.Empty;
+
+            return apk;
         }
     }
 }
