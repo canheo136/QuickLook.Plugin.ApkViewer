@@ -30,7 +30,8 @@
             "Nougat",
             "Oreo",
             "Oreo",
-            "Pie",  // API level 28
+            "Pie",
+            "Android10"  // API level 29
         };
 
         private static readonly string[] AndroidVersionCode = {
@@ -61,7 +62,8 @@
             "7.1",
             "8.0",
             "8.1",
-            "9",    // API level 28
+            "9",
+            "10"    // API level 29
         };
 
         public string APILever { get; }
@@ -75,7 +77,8 @@
         }
 
         public static SDKInfo GetInfo(int sdkVer) {
-            int index = (sdkVer < 3 || sdkVer > 28) ? 0 : sdkVer - 2;
+            // Must be update if android releases new version
+            int index = (sdkVer < 3 || sdkVer > 29) ? 0 : sdkVer - 2;
 
             return new SDKInfo(sdkVer.ToString(), AndroidVersionCode[index], AndroidCodeName[index]);
         }
@@ -88,11 +91,10 @@
 
         public override string ToString() {
             if (APILever.Equals("0") && Version.Equals("0") && CodeName.Equals("0"))
-                // Empty SDK
-                return "Unknown";
+                return AndroidCodeName[0];
 
             return $"API Level {this.APILever} " +
-                $"{(this.Version == "Unknown" ? "(Unknown - " : $"(Android {this.Version} - ")}" +
+                $"{(this.Version == AndroidCodeName[0] ? $"({AndroidCodeName[0]} - " : $"(Android {this.Version} - ")}" +
                 $"{this.CodeName})";
         }
     }
