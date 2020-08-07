@@ -24,7 +24,7 @@ namespace QuickLook.Plugin.ApkViewer {
             var apk = AAPTool.Decompile(path);
             if (apk.IsEmpty) {
                 context.ViewerContent = new System.Windows.Controls.Label() {
-                    Content = "Can't not load package.",
+                    Content = "Can not load package.",
                     Foreground = System.Windows.Media.Brushes.White,
                     FontSize = 16,
                     VerticalAlignment = VerticalAlignment.Center,
