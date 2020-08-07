@@ -14,5 +14,9 @@ Android package plugin for [QuickLook](https://github.com/QL-Win/QuickLook), all
 4. Run Scripts\pack-zip.ps1.
 5. Find plugin `QuickLook.Plugin.ApkViewer.qlplugin` in the project directory.
 
+## Known problems
+- Failed to load package with filename in unicode `UTF-8`. If you get a message with content **"Can not load package"**, please change your filename and try again.
+- Can't extract icon from some packages. This problem depend on how the package is compressed and extract process takes too much time (~~**SlowLook**~~)
+
 ## License
  &nbsp;&nbsp;&nbsp;&nbsp;**GPL-3.0**
