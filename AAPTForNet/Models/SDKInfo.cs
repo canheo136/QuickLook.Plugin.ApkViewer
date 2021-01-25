@@ -1,6 +1,8 @@
-﻿namespace AAPTForNet {
+﻿using System.Collections.Generic;
+
+namespace AAPTForNet.Models {
     public class SDKInfo {
-        public static readonly SDKInfo Unknown = new SDKInfo("0", "0", "0");
+        internal static readonly SDKInfo Unknown = new SDKInfo("0", "0", "0");
 
         private static readonly string[] AndroidCodeName = {
             "Unknown",
@@ -77,7 +79,7 @@
         }
 
         public static SDKInfo GetInfo(int sdkVer) {
-            // Must be update if android releases new version
+            // Must be updated if android releases new version
             int index = (sdkVer < 3 || sdkVer > 29) ? 0 : sdkVer - 2;
 
             return new SDKInfo(sdkVer.ToString(), AndroidVersionCode[index], AndroidCodeName[index]);
@@ -85,8 +87,16 @@
 
         public static SDKInfo GetInfo(string sdkVer) {
             int.TryParse(sdkVer, out int ver);
-
             return GetInfo(ver);
+        }
+
+        public override int GetHashCode() => 1008763889 + EqualityComparer<string>.Default.GetHashCode(this.APILever);
+
+        public override bool Equals(object obj) {
+            if(obj is SDKInfo another) {
+                return this.APILever == another.APILever;
+            }
+            return false;
         }
 
         public override string ToString() {

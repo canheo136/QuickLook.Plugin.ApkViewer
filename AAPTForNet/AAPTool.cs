@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using AAPTForNet.Models;
+
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace AAPTForNet {
@@ -6,20 +9,30 @@ namespace AAPTForNet {
     /// Android Assert Packing Tool for NET
     /// </summary>
     public class AAPTool : System.Diagnostics.Process {
-        private static readonly string _tempFolderPath = Path.GetTempPath() + @"QL.ApkViewer";
-        
-        public static string AppPath => Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
-        public static string TempPath {
-            get {
-                if(!Directory.Exists(_tempFolderPath)) {
-                    Directory.CreateDirectory(_tempFolderPath);
-                }
-                return _tempFolderPath;
-            }
+        private enum DumpTypes {
+            Manifest = 0,
+            Resources = 1,
+            ManifestTree = 2,
         }
 
+        private const string command = "dump";
+        /// <summary>
+        /// Sub command for dump, extract AndroidManifest.xml
+        /// </summary>
+        private const string manifest = "badging";
+        /// <summary>
+        /// Sub command for dump, extract AndroidManifest.xml, in xmltree format
+        /// </summary>
+        private const string manifestTree = "xmltree";
+        /// <summary>
+        /// Sub command for dump, extract resources.arsc
+        /// </summary>
+        private const string resources = "--values resources";
+        
+        private static readonly string AppPath = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
+
         protected AAPTool() {
-            this.StartInfo.FileName = AppPath + @"\tool\aapt.exe"; // The name of the executable file
+            this.StartInfo.FileName = AppPath + @"\tool\aapt.exe";
             this.StartInfo.CreateNoWindow = true;
             this.StartInfo.UseShellExecute = false; // For read output data
             this.StartInfo.RedirectStandardError = true;
@@ -31,47 +44,87 @@ namespace AAPTForNet {
             this.StartInfo.Arguments = args;
             return base.Start();
         }
+        
+        private static DumpModel dump(
+            string path, DumpTypes type, Func<string, int, bool> callback) {
 
-        private static DumpModel dump(string path) {
-            if (!File.Exists(path))
-                throw new IOException("File not found.");
-            
-            var output = new List<string>();
+            int index = 0;
+            var terminated = false;
+            var msg = string.Empty;
             var aapt = new AAPTool();
-                aapt.Start(string.Format("dump badging \"{0}\"", path));
+            var output = new List<string>();
 
-            while(!aapt.StandardOutput.EndOfStream) {
-                // Read output line by line, more convenient for parse (than ReadToEnd)
-                output.Add(aapt.StandardOutput.ReadLine());
+            switch (type) {
+                case DumpTypes.Manifest:
+                    aapt.Start($"{command} {manifest} \"{path}\"");
+                    break;
+                case DumpTypes.Resources:
+                    aapt.Start($"{command} {resources} \"{path}\"");
+                    break;
+                case DumpTypes.ManifestTree:
+                    aapt.Start($"{command} {manifestTree} \"{path}\" AndroidManifest.xml");
+                    break;
+                //default:
+                //    return new DumpModel(path, false, output);
             }
 
-            while(!aapt.StandardError.EndOfStream) {
+            while (!aapt.StandardOutput.EndOfStream && !terminated) {
+                msg = aapt.StandardOutput.ReadLine();
+                
+                if (callback(msg, index)) {
+                    terminated = true;
+                    try {
+                        aapt.Kill();
+                    }
+                    catch { }
+                }
+                if (!terminated)
+                    index++;
+                output.Add(msg);
+            }
+
+            while (!aapt.StandardError.EndOfStream) {
                 output.Add(aapt.StandardError.ReadLine());
             }
 
-            aapt.WaitForExit();
-            aapt.Close();
-
-            // An error have only 2 messages
-            return new DumpModel(path, output.Count > 5, output);
-        }
-
-        public static ApkInfo Decompile(string path) {
-            var dummModel = dump(path);
-
-            if(dummModel.isSuccess) {
-                var apk = ApkParser.Parse(dummModel);
-                return ApkExtractor.ExtractIcon(dummModel, apk);
+            try {
+                aapt.WaitForExit();
+                aapt.Close();
+                aapt.Dispose();
             }
-
-            return ApkInfo.Empty;
+            catch { }
+            
+            return new DumpModel(path, output.Count > 2, output);
         }
 
-        public static void Init() {
-            // Clear temp folder.
-            // Should be called when QuickLook starts
-            if(Directory.Exists(_tempFolderPath))
-                Directory.Delete(_tempFolderPath, true);
+        internal static DumpModel dumpManifest(string path) {
+            return dump(path, DumpTypes.Manifest, (msg, i) => false);
+        }
+
+        internal static DumpModel dumpResources(string path, Func<string, int, bool> callback) {
+            return dump(path, DumpTypes.Resources, callback);
+        }
+
+        internal static DumpModel dumpManifestTree(string path, Func<string, int, bool> callback) {
+            return dump(path, DumpTypes.ManifestTree, callback);
+        }
+
+        /// <summary>
+        /// Start point. Begin decompile apk to extract resources
+        /// </summary>
+        /// <param name="path">Absolute path to .apk file</param>
+        /// <returns>Filled apk if dump process is not failed</returns>
+        public static ApkInfo Decompile(string path) {
+            var manifest = ApkExtractor.ExtractManifest(path);
+            if (!manifest.isSuccess)
+                return new ApkInfo();
+
+            var largestIcon = ApkExtractor.ExtractLargestIcon(path);
+
+            return ApkParser.Parse(manifest).megre(
+                new ApkInfo() { FullPath = path },
+                new ApkInfo() { Icon = largestIcon }
+            );
         }
     }
 }

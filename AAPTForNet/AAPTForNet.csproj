@@ -40,9 +40,17 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ApkExtractor.cs" />
-    <Compile Include="Models\ApkInfo.cs" />
     <Compile Include="ApkParser.cs" />
+    <Compile Include="Filters\ApplicationFilter.cs" />
+    <Compile Include="Filters\BaseFilter.cs" />
+    <Compile Include="Filters\PackageFilter.cs" />
+    <Compile Include="Filters\PermissionFilter.cs" />
+    <Compile Include="Filters\SDKFilter.cs" />
+    <Compile Include="Filters\SupportScrFilter.cs" />
+    <Compile Include="Models\ApkInfo.cs" />
+    <Compile Include="Models\Configs.cs" />
     <Compile Include="Models\DumpModel.cs" />
+    <Compile Include="Models\Icon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\SDKInfo.cs" />
   </ItemGroup>

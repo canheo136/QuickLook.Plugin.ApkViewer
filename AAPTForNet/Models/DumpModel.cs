@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AAPTForNet {
+namespace AAPTForNet.Models {
     internal class DumpModel {
         public string FilePath { get; }
         public bool isSuccess { get; }
