@@ -8,9 +8,9 @@ using System.Windows;
 [assembly: AssemblyTitle("QuickLook.Plugin.ApkViewer")]
 [assembly: AssemblyDescription("Android package plugin for QuickLook")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("CaNheo")]
 [assembly: AssemblyProduct("QuickLook.Plugin.ApkViewer")]
-[assembly: AssemblyCopyright("CaNheo")]
+[assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -37,3 +37,6 @@ using System.Windows;
     //(used if a resource is not found in the page,
     // app, or any theme specific resource dictionaries)
 )]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
+

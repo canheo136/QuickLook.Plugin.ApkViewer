@@ -6,18 +6,17 @@ namespace QuickLook.Plugin.ApkViewer {
     public class Plugin : IViewer {
         public int Priority => 0;
 
-        public void Init() => AAPTool.Init();
+        public void Init() {}
 
         public bool CanHandle(string path) => path.ToLower().EndsWith(".apk");
 
         public void Prepare(string path, ContextObject context) {
-            context.Theme = Themes.Dark;
-            context.PreferredSize = new Size { Width = 750, Height = 350 };
             context.Title = path;
             context.TitlebarOverlap = false;
+            context.FullWindowDragging = true;
             context.TitlebarBlurVisibility = false;
             context.TitlebarColourVisibility = false;
-            context.FullWindowDragging = true;
+            context.PreferredSize = new Size { Width = 750, Height = 350 };
         }
 
         public void View(string path, ContextObject context) {

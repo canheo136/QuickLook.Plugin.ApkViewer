@@ -1,13 +1,14 @@
-﻿using System;
+﻿using AAPTForNet.Models;
+
+using QuickLook.Common.ExtensionMethods;
+using QuickLook.Common.Plugin;
+
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-
-using AAPTForNet;
-using QuickLook.Common.Plugin;
-using QuickLook.Common.ExtensionMethods;
 
 namespace QuickLook.Plugin.ApkViewer {
 
@@ -25,38 +26,38 @@ namespace QuickLook.Plugin.ApkViewer {
 
         public ViewerPane() {
             InitializeComponent();
-
-            btnSwTheme.Source = new BitmapImage(new Uri(AAPTool.AppPath + @"\images\switch_theme.png"));
             btnSwTheme.MouseLeftButtonDown += (sender, e) => {
-                bool isDark = _quickLook.Theme == Themes.Dark;
-
-                // Make some effect with switch button.
-                btnSwTheme.RenderTransform = new RotateTransform(
-                    isDark ? 180 : 0,
-                    btnSwTheme.Width / 2,
-                    btnSwTheme.Height / 2
-                );
-                this.Resources["TextForeground"] = isDark ? Brushes.Black : Brushes.White;
-                _quickLook.Theme = isDark ? Themes.Light : Themes.Dark;
+                _quickLook.Theme = _quickLook.Theme == Themes.Dark ?
+                    Themes.Light : Themes.Dark;
             };
         }
 
         public ViewerPane(ContextObject ql) : this() {
             _quickLook = ql;
-            
-            // Highlight label on QuickLook default theme
-            this.Resources["TextForeground"] = ql.Theme == Themes.Dark ?
-                Brushes.White : Brushes.Black;
+            _quickLook.PropertyChanged += (sender, e) => {
+                if (e.PropertyName != nameof(_quickLook.Theme))
+                    return;
+
+                if (_quickLook.Theme == Themes.Dark) {
+                    Resources["TextForeground"] = Brushes.White;
+                    btnSwTheme.Source = Resources["LightSwImage"] as BitmapImage;
+                }
+                else {
+                    Resources["TextForeground"] = Brushes.Black;
+                    btnSwTheme.Source = Resources["DarkSwImage"] as BitmapImage;
+                }
+            };
+            _quickLook.Theme = Themes.Dark; // Init default theme
         }
 
         private void initGUI() {
-            labelAppName.Content = ApkInfo.AppName;
-            labelPckName.Content = ApkInfo.PackageName;
-            labelVer.Content = ApkInfo.Version;
-            labelMinSDK.Content = ApkInfo.MinSDK;
-            labelTargetSDK.Content = ApkInfo.TargetSDK;
+            labelAppName.Content    = ApkInfo.AppName;
+            labelPckName.Content    = ApkInfo.PackageName;
+            labelVer.Content        = ApkInfo.Version;
+            labelMinSDK.Content     = ApkInfo.MinSDK;
+            labelTargetSDK.Content  = ApkInfo.TargetSDK;
+            labelPckSize.Content    = ApkInfo.PackageSize.ToPrettySize(2);
             labelSupportScr.Content = string.Join(", ", ApkInfo.SupportScreens);
-            labelPckSize.Content = ApkInfo.PackageSize.ToPrettySize(2);
 
             if (ApkInfo.Permissions.Count != 0) {
                 foreach (string per in ApkInfo.Permissions) {
@@ -64,32 +65,43 @@ namespace QuickLook.Plugin.ApkViewer {
                         // Disable access key (mnemonics)
                         // https://docs.microsoft.com/en-us/dotnet/api/system.windows.controls.label#remarks
                         Content = per.Replace("_", "__"),
-                        Style = (Style)this.Resources["HoverableLabel"]
+                        Style = Resources["HoverableLabel"] as Style
                     });
                 }
             }
             else {
                 panelPermission.Content = new Label() {
-                    Content = "This package does not require any permissions",
+                    Content = "This package does not require any permission",
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    Style = (Style)this.Resources["LabelBaseStyle"]
+                    Style = Resources["LabelBaseStyle"] as Style
                 };
             }
 
-            string uri = ApkInfo.IconPath;
+            if(ApkInfo.Icon.isImage) {
+                var uri = new Uri(ApkInfo.Icon.RealPath);
 
-            if (ApkInfo.IconPath != string.Empty) {
+                image.ToolTip = "Open image";
+                image.Source = loadBitmapImage(uri);
                 image.MouseLeftButtonDown += (sender, e) => {
-                    System.Diagnostics.Process.Start("explorer.exe", ApkInfo.IconPath);
+                    Process.Start("explorer.exe", ApkInfo.Icon.RealPath);
                 };
             }
             else {
-                image.ToolTip = "Default icon";
-                uri = AAPTool.AppPath + @"\images\default_icon.png";
+                image.Source = Resources["DefaultIcon"] as BitmapImage;
             }
+        }
 
-            image.Source = new BitmapImage(new Uri(uri));
+        private BitmapImage loadBitmapImage(Uri source) {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            // Ignore previous image in cache
+            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            // Cached image, prevent file in use exception
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.UriSource = source;
+            bitmap.EndInit();
+            return bitmap;
         }
     }
 }
