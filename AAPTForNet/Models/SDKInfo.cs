@@ -4,10 +4,12 @@ namespace AAPTForNet.Models {
     public class SDKInfo {
         internal static readonly SDKInfo Unknown = new SDKInfo("0", "0", "0");
 
-        private static readonly string[] AndroidCodeName = {
+        // https://source.android.com/setup/start/build-numbers
+        private static readonly string[] AndroidCodeNames = {
             "Unknown",
-
-            "Cupcake",  // API level 3
+            "Unnamed",  // API level 1
+            "Unnamed",
+            "Cupcake",
             "Donut",
             "Eclair",
             "Eclair",
@@ -33,13 +35,15 @@ namespace AAPTForNet.Models {
             "Oreo",
             "Oreo",
             "Pie",
-            "Android10"  // API level 29
+            "Android10",
+            "Android11"  // API level 30
         };
 
-        private static readonly string[] AndroidVersionCode = {
+        private static readonly string[] AndroidVersionCodes = {
             "Unknown",
-
-            "1.5",  // API level 3
+            "1.0",  // API level 1
+            "1.1",
+            "1.5",
             "1.6",
             "2.0",
             "2.0",
@@ -65,7 +69,8 @@ namespace AAPTForNet.Models {
             "8.0",
             "8.1",
             "9",
-            "10"    // API level 29
+            "10",
+            "11"    // API level 30
         };
 
         public string APILever { get; }
@@ -79,10 +84,10 @@ namespace AAPTForNet.Models {
         }
 
         public static SDKInfo GetInfo(int sdkVer) {
-            // Must be updated if android releases new version
-            int index = (sdkVer < 3 || sdkVer > 29) ? 0 : sdkVer - 2;
+            int index = (sdkVer < 1 || sdkVer > AndroidCodeNames.Length - 1) ? 0 : sdkVer;
 
-            return new SDKInfo(sdkVer.ToString(), AndroidVersionCode[index], AndroidCodeName[index]);
+            return new SDKInfo(sdkVer.ToString(),
+                AndroidVersionCodes[index], AndroidCodeNames[index]);
         }
 
         public static SDKInfo GetInfo(string sdkVer) {
@@ -101,10 +106,10 @@ namespace AAPTForNet.Models {
 
         public override string ToString() {
             if (APILever.Equals("0") && Version.Equals("0") && CodeName.Equals("0"))
-                return AndroidCodeName[0];
+                return AndroidCodeNames[0];
 
             return $"API Level {this.APILever} " +
-                $"{(this.Version == AndroidCodeName[0] ? $"({AndroidCodeName[0]} - " : $"(Android {this.Version} - ")}" +
+                $"{(this.Version == AndroidCodeNames[0] ? $"({AndroidCodeNames[0]} - " : $"(Android {this.Version} - ")}" +
                 $"{this.CodeName})";
         }
     }
