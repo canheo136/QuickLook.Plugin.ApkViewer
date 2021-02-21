@@ -70,7 +70,7 @@
             <Label Content="Application name:" Style="{StaticResource StaticLabel}"/>
             <Label Content="Package name:"     Style="{StaticResource StaticLabel}"/>
             <Label Content="Version name:"     Style="{StaticResource StaticLabel}"/>
-            <Label Content="Version Code:"     Style="{StaticResource StaticLabel}"/>
+            <Label Content="Version code:"     Style="{StaticResource StaticLabel}"/>
             <Label Content="Min SDK:"          Style="{StaticResource StaticLabel}"/>
             <Label Content="Target SDK:"       Style="{StaticResource StaticLabel}"/>
             <Label Content="Support screens:"  Style="{StaticResource StaticLabel}"/>

@@ -9,44 +9,8 @@ using System.Linq;
 namespace AAPTForNet {
     internal class ApkExtractor {
 
-        private static string ExtractIconImage(string path, Icon icon) {
-            if (Icon.Default.Equals(icon))
-                return "markup.xml";    // To use default icon
-
-            string tempPath = Path.Combine(Path.GetTempPath(), "AAPToolTempImage.png");
-            TryExtractIconImage(path, icon.IconName, tempPath);
-            return tempPath;
-        }
-
-        private static void TryExtractIconImage(string path, string iconName, string desFile) {
-            try {
-                ExtractIconImage(path, iconName, desFile);
-            }
-            catch(ArgumentException) {}
-        }
-
-        /// <summary>
-        /// Extract icon with name @iconName from @path to @desFile
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="iconName"></param>
-        /// <param name="desFile"></param>
-        private static void ExtractIconImage(string path, string iconName, string desFile) {
-            if (iconName.EndsWith(".xml") || !File.Exists(path))
-                throw new ArgumentException("Invalid params");
-
-            using (var archive = ZipFile.OpenRead(path)) {
-                ZipArchiveEntry entry;
-
-                for (int i = archive.Entries.Count - 1; i > 0; i--) {
-                    entry = archive.Entries[i];
-
-                    if (entry.FullName.Equals(iconName)) {
-                        entry.ExtractToFile(desFile, true);
-                        break;
-                    }
-                }
-            }
+        public static DumpModel ExtractManifest(string path) {
+            return AAPTool.dumpManifest(path);
         }
 
         /// <summary>
@@ -60,28 +24,9 @@ namespace AAPTForNet {
             return largestIcon;
         }
 
-        private static Icon ExtractLargestIcon(Dictionary<string, Icon> iconTable) {
-            if (iconTable.Count == 0)
-                return Icon.Default;
-
-            var icon = Icon.Default;
-            var configNames = Enum.GetNames(typeof(Configs)).ToList();
-                configNames.Sort(new ConfigComparer());
-
-            foreach (string cfg in configNames) {
-                // Get the largest icon image, skip markup file (xml)
-                if (iconTable.TryGetValue(cfg, out icon)) {
-                    if (icon.IconName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
-                        continue;
-                    break;  // Largest icon here :)
-                }
-            }
-
-            return icon ?? Icon.Default;
-        }
-
-        public static DumpModel ExtractManifest(string path) {
-            return AAPTool.dumpManifest(path);
+        private static Dictionary<string, Icon> ExtractIconTable(string path) {
+            var iconID = ExtractIconID(path);
+            return ExtractIconTable(path, iconID);
         }
 
         /// <summary>
@@ -111,11 +56,6 @@ namespace AAPTForNet {
             }
 
             return string.Empty;
-        }
-
-        private static Dictionary<string, Icon> ExtractIconTable(string path) {
-            var iconID = ExtractIconID(path);
-            return ExtractIconTable(path, iconID);
         }
 
         private static Dictionary<string, Icon> ExtractIconTable(string path, string iconID) {
@@ -187,6 +127,66 @@ namespace AAPTForNet {
             return iconTable;
         }
 
+        private static string ExtractIconImage(string path, Icon icon) {
+            if (Icon.Default.Equals(icon))
+                return "markup.xml";    // To use default icon
+
+            string tempPath = Path.Combine(Path.GetTempPath(), "AAPToolTempImage.png");
+            TryExtractIconImage(path, icon.IconName, tempPath);
+            return tempPath;
+        }
+
+        private static void TryExtractIconImage(string path, string iconName, string desFile) {
+            try {
+                ExtractIconImage(path, iconName, desFile);
+            }
+            catch(ArgumentException) {}
+        }
+
+        /// <summary>
+        /// Extract icon with name @iconName from @path to @desFile
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="iconName"></param>
+        /// <param name="desFile"></param>
+        private static void ExtractIconImage(string path, string iconName, string desFile) {
+            if (iconName.EndsWith(".xml") || !File.Exists(path))
+                throw new ArgumentException("Invalid params");
+
+            using (var archive = ZipFile.OpenRead(path)) {
+                ZipArchiveEntry entry;
+
+                for (int i = archive.Entries.Count - 1; i > 0; i--) {
+                    entry = archive.Entries[i];
+
+                    if (entry.FullName.Equals(iconName)) {
+                        entry.ExtractToFile(desFile, true);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private static Icon ExtractLargestIcon(Dictionary<string, Icon> iconTable) {
+            if (iconTable.Count == 0)
+                return Icon.Default;
+
+            var icon = Icon.Default;
+            var configNames = Enum.GetNames(typeof(Configs)).ToList();
+                configNames.Sort(new ConfigComparer());
+
+            foreach (string cfg in configNames) {
+                // Get the largest icon image, skip markup file (xml)
+                if (iconTable.TryGetValue(cfg, out icon)) {
+                    if (icon.IconName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    break;  // Largest icon here :)
+                }
+            }
+
+            return icon ?? Icon.Default;
+        }
+        
         /// <summary>
         /// DPI config comparer, ordered by desc (largest first)
         /// </summary>
