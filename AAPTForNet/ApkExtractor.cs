@@ -101,6 +101,10 @@ namespace AAPTForNet {
                     return false;
                 }
             );
+
+            if (iconIndex == 0) // Package without launcher icon
+                return string.Empty;
+
             if (manifestTree.isSuccess) {
                 string msg = manifestTree.Messages[iconIndex];
                 return msg.Split('@')[1];
@@ -156,7 +160,7 @@ namespace AAPTForNet {
             // reverse list and get first elem with LINQ
             var configNames = Enum.GetNames(typeof(Configs)).Reverse();
             var iconTable = new Dictionary<string, Icon>();
-            string msg, iconName;
+            string msg, iconName, config;
 
             foreach (int index in positions) {
                 for (int i = index; ; i--) {
@@ -171,11 +175,11 @@ namespace AAPTForNet {
                         iconName = messages[index + 1]
                             .Split(seperator)
                             .FirstOrDefault(n => n.Contains("/"));
+                        config = configNames.FirstOrDefault(c => msg.Contains(c));
 
-                        iconTable.Add(
-                            configNames.FirstOrDefault(c => msg.Contains(c)),
-                            new Icon(iconName)
-                        );
+                        if (!iconTable.ContainsKey(config))
+                            iconTable.Add(config, new Icon(iconName));
+
                         break;
                     }
                 }

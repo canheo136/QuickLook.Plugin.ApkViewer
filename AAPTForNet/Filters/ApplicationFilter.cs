@@ -22,11 +22,14 @@ namespace AAPTForNet.Filters {
         public override void clear() => segments = new string[] { };
 
         private string getName() {
+            string output = string.Empty;
             for(int i = 0; i < segments.Length; i++) {
-                if (segments[i].Contains("label=")) // Find key
-                    return segments[++i];           // Return value
+                if (segments[i].Contains("label=")) {
+                    output = segments[++i];
+                    break;
+                }
             }
-            return string.Empty;
+            return string.IsNullOrEmpty(output) ? defaultEmptyValue : output;
         }
     }
 }

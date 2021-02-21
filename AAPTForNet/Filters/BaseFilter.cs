@@ -3,6 +3,7 @@
 namespace AAPTForNet.Filters {
     internal abstract class BaseFilter {
         protected const char seperator = '\'';
+        protected const string defaultEmptyValue = "Unknown";
 
         public abstract bool canHandle(string msg);
         public abstract void addMessage(string msg);

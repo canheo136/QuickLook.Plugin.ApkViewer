@@ -15,27 +15,23 @@ namespace AAPTForNet.Filters {
 
         public override ApkInfo getAPK() {
             return new ApkInfo() {
-                Version = getVersion(),
-                PackageName = getName(),
+                PackageName = getValueOrDefault("package"),
+                VersionName = getValueOrDefault("versionName"),
+                VersionCode = getValueOrDefault("versionCode"),
             };
         }
 
         public override void clear() => segments = new string[] { };
 
-        private string getName() {
+        private string getValueOrDefault(string key) {
+            string output = string.Empty;
             for (int i = 0; i < segments.Length; i++) {
-                if (segments[i].Contains("package"))    // Find key
-                    return segments[++i];               // Return value
+                if (segments[i].Contains(key)) {    // Find key
+                    output = segments[++i];         // Get value
+                    break;
+                }
             }
-            return string.Empty;
-        }
-
-        private string getVersion() {
-            for (int i = 0; i < segments.Length; i++) {
-                if (segments[i].Contains("versionName"))    // Find key
-                    return segments[++i];                   // Return value
-            }
-            return string.Empty;
+            return string.IsNullOrEmpty(output) ? defaultEmptyValue : output;
         }
     }
 }
