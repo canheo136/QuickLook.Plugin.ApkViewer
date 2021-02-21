@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:QuickLook.Plugin.ApkViewer"
-             mc:Ignorable="d" d:DesignWidth="450" Height="405" Width="auto" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Center">
+             mc:Ignorable="d" d:DesignWidth="450" Height="415" Width="auto" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Center">
 
     <UserControl.Resources>
         <SolidColorBrush x:Key="TextForeground" Color="Black"/>
@@ -70,6 +70,7 @@
             <Label Content="Application name:" Style="{StaticResource StaticLabel}"/>
             <Label Content="Package name:"     Style="{StaticResource StaticLabel}"/>
             <Label Content="Version name:"     Style="{StaticResource StaticLabel}"/>
+            <Label Content="Version Code:"     Style="{StaticResource StaticLabel}"/>
             <Label Content="Min SDK:"          Style="{StaticResource StaticLabel}"/>
             <Label Content="Target SDK:"       Style="{StaticResource StaticLabel}"/>
             <Label Content="Support screens:"  Style="{StaticResource StaticLabel}"/>
@@ -80,6 +81,7 @@
             <TextBox x:Name="tbAppName"    Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbPckName"    Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbVerName"    Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <TextBox x:Name="tbVerCode"    Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbMinSDK"     Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbTargetSDK"  Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbSupportScr" Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>

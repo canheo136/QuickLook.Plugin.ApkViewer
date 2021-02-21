@@ -7,10 +7,8 @@ namespace AAPTForNet.Models {
     public class ApkInfo {
         public string AppName { get; set; }
         public string PackageName { get; set; }
-        /// <summary>
-        /// Version name
-        /// </summary>
-        public string Version { get; set; }
+        public string VersionName { get; set; }
+        public string VersionCode { get; set; }
         /// <summary>
         /// Absolute path to apk file
         /// </summary>
@@ -45,7 +43,8 @@ namespace AAPTForNet.Models {
         internal ApkInfo() {
             AppName        = string.Empty;
             PackageName    = string.Empty;
-            Version        = string.Empty;
+            VersionName    = string.Empty;
+            VersionCode    = string.Empty;
             FullPath       = string.Empty;
             Icon           = Icon.Default;
             MinSDK         = SDKInfo.Unknown;
@@ -75,7 +74,8 @@ namespace AAPTForNet.Models {
 
             var pckApk = apks.FirstOrDefault(a => a.PackageName.Length > 0);
             if (pckApk != null) {
-                init.Version = pckApk.Version;
+                init.VersionName = pckApk.VersionName;
+                init.VersionCode = pckApk.VersionCode;
                 init.PackageName = pckApk.PackageName;
             }
 

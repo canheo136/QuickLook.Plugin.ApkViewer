@@ -54,7 +54,8 @@ namespace QuickLook.Plugin.ApkViewer {
         private void initGUI() {
             tbAppName.Text      = ApkInfo.AppName;
             tbPckName.Text      = ApkInfo.PackageName;
-            tbVerName.Text      = ApkInfo.Version;
+            tbVerName.Text      = ApkInfo.VersionName;
+            tbVerCode.Text      = ApkInfo.VersionCode;
             tbMinSDK.Text       = ApkInfo.MinSDK.ToString();
             tbTargetSDK.Text    = ApkInfo.TargetSDK.ToString();
             tbPckSize.Text      = ApkInfo.PackageSize.ToPrettySize(2);
