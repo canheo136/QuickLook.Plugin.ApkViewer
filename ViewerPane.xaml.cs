@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -51,22 +52,21 @@ namespace QuickLook.Plugin.ApkViewer {
         }
 
         private void initGUI() {
-            labelAppName.Content    = ApkInfo.AppName;
-            labelPckName.Content    = ApkInfo.PackageName;
-            labelVer.Content        = ApkInfo.Version;
-            labelMinSDK.Content     = ApkInfo.MinSDK;
-            labelTargetSDK.Content  = ApkInfo.TargetSDK;
-            labelPckSize.Content    = ApkInfo.PackageSize.ToPrettySize(2);
-            labelSupportScr.Content = string.Join(", ", ApkInfo.SupportScreens);
+            tbAppName.Text      = ApkInfo.AppName;
+            tbPckName.Text      = ApkInfo.PackageName;
+            tbVerName.Text      = ApkInfo.Version;
+            tbMinSDK.Text       = ApkInfo.MinSDK.ToString();
+            tbTargetSDK.Text    = ApkInfo.TargetSDK.ToString();
+            tbPckSize.Text      = ApkInfo.PackageSize.ToPrettySize(2);
+            tbSupportScr.Text   = string.Join(", ", ApkInfo.SupportScreens);
 
             if (ApkInfo.Permissions.Count != 0) {
+                var hoverableStyle = Resources["HoverableLabel"] as Style;
+
                 foreach (string per in ApkInfo.Permissions) {
-                    permissionStack.Children.Add(new Label() {
-                        // Disable access key (mnemonics)
-                        // https://docs.microsoft.com/en-us/dotnet/api/system.windows.controls.label#remarks
-                        Content = per.Replace("_", "__"),
-                        Style = Resources["HoverableLabel"] as Style
-                    });
+                    permissionStack.Children.Add(
+                        new HoverableLabel(per, hoverableStyle, SelectableLabel_MouseDoubleClick)
+                    );
                 }
             }
             else {
@@ -74,7 +74,7 @@ namespace QuickLook.Plugin.ApkViewer {
                     Content = "This package does not require any permission",
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    Style = Resources["LabelBaseStyle"] as Style
+                    Style = Resources["CommonStyle"] as Style
                 };
             }
 
@@ -102,6 +102,19 @@ namespace QuickLook.Plugin.ApkViewer {
             bitmap.UriSource = source;
             bitmap.EndInit();
             return bitmap;
+        }
+
+        private void SelectableLabel_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+            var ctrl = sender as TextBox;
+            ctrl?.SelectAll();
+        }
+
+        private class HoverableLabel : TextBox {
+            public HoverableLabel(string text, Style style, MouseButtonEventHandler dbClickHandler) {
+                this.Text = text;
+                this.Style = style;
+                this.MouseDoubleClick += dbClickHandler;
+            }
         }
     }
 }
