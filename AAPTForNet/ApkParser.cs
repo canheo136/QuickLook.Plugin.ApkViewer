@@ -25,7 +25,7 @@ namespace AAPTForNet {
                 foreach(var f in filters) {
                     if (f.canHandle(msg)) {
                         f.addMessage(msg);
-                        continue;
+                        break;
                     }
                 }
             }

@@ -14,21 +14,7 @@ namespace AAPTForNet {
             Resources = 1,
             ManifestTree = 2,
         }
-
-        private const string command = "dump";
-        /// <summary>
-        /// Sub command for dump, extract AndroidManifest.xml
-        /// </summary>
-        private const string manifest = "badging";
-        /// <summary>
-        /// Sub command for dump, extract AndroidManifest.xml, in xmltree format
-        /// </summary>
-        private const string manifestTree = "xmltree";
-        /// <summary>
-        /// Sub command for dump, extract resources.arsc
-        /// </summary>
-        private const string resources = "--values resources";
-        
+                
         private static readonly string AppPath = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
 
         protected AAPTool() {
@@ -56,13 +42,13 @@ namespace AAPTForNet {
 
             switch (type) {
                 case DumpTypes.Manifest:
-                    aapt.Start($"{command} {manifest} \"{path}\"");
+                    aapt.Start($"dump badging \"{path}\"");
                     break;
                 case DumpTypes.Resources:
-                    aapt.Start($"{command} {resources} \"{path}\"");
+                    aapt.Start($"dump --values resources \"{path}\"");
                     break;
                 case DumpTypes.ManifestTree:
-                    aapt.Start($"{command} {manifestTree} \"{path}\" AndroidManifest.xml");
+                    aapt.Start($"dump xmltree \"{path}\" AndroidManifest.xml");
                     break;
                 //default:
                 //    return new DumpModel(path, false, output);
@@ -122,8 +108,10 @@ namespace AAPTForNet {
             var largestIcon = ApkExtractor.ExtractLargestIcon(path);
 
             return ApkParser.Parse(manifest).megre(
-                new ApkInfo() { FullPath = path },
-                new ApkInfo() { Icon = largestIcon }
+                new ApkInfo() {
+                    FullPath = path,
+                    Icon = largestIcon,
+                }
             );
         }
     }
