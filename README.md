@@ -11,11 +11,10 @@ Android package plugin for [QuickLook](https://github.com/QL-Win/QuickLook), all
 4. Restart QuickLook.
 
 ## Development
-1. Clone this repo
-2. Clone [QuickLook.Common](https://github.com/QL-Win/QuickLook.Common)
-3. Build project with Release profile.
-4. Run Scripts\pack-zip.ps1.
-5. Find plugin `QuickLook.Plugin.ApkViewer.qlplugin` in the project directory.
+1. Run [clone_project.ps1](https://raw.githubusercontent.com/canheo136/QuickLook.Plugin.ApkViewer/master/Scripts/clone_project.ps1)
+2. Build project with Release profile.
+3. Run Scripts\pack-zip.ps1.
+4. Find plugin `QuickLook.Plugin.ApkViewer.qlplugin` in the project directory.
 
 ## License
  &nbsp;&nbsp;&nbsp;&nbsp;**GPL-3.0**
