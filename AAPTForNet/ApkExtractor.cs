@@ -127,7 +127,13 @@ namespace AAPTForNet {
             return iconTable;
         }
 
-        private static string ExtractIconImage(string path, Icon icon) {
+        /// <summary>
+        /// Extract icon image from apk file
+        /// </summary>
+        /// <param name="path">path to apk file</param>
+        /// <param name="icon"></param>
+        /// <returns>Absolute path to extracted image</returns>
+        public static string ExtractIconImage(string path, Icon icon) {
             if (Icon.Default.Equals(icon))
                 return "markup.xml";    // To use default icon
 
@@ -159,7 +165,9 @@ namespace AAPTForNet {
                 for (int i = archive.Entries.Count - 1; i > 0; i--) {
                     entry = archive.Entries[i];
 
-                    if (entry.FullName.Equals(iconName)) {
+                    if (entry.Name.Equals(iconName) ||
+                        entry.FullName.Equals(iconName)) {
+
                         entry.ExtractToFile(desFile, true);
                         break;
                     }

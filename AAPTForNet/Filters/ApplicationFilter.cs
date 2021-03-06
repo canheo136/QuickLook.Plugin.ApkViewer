@@ -14,17 +14,22 @@ namespace AAPTForNet.Filters {
         }
 
         public override ApkInfo getAPK() {
+            // Try getting icon name from manifest, may be an image
+            string iconName = getValue("icon=");
+
             return new ApkInfo() {
-                AppName = getName()
+                AppName = getValue("label="),
+                Icon = iconName == defaultEmptyValue ?
+                    new Icon() : new Icon(iconName)
             };
         }
 
         public override void clear() => segments = new string[] { };
-
-        private string getName() {
+        
+        private string getValue(string key) {
             string output = string.Empty;
             for(int i = 0; i < segments.Length; i++) {
-                if (segments[i].Contains("label=")) {
+                if (segments[i].Contains(key)) {
                     output = segments[++i];
                     break;
                 }

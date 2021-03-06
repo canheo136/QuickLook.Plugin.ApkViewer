@@ -105,14 +105,18 @@ namespace AAPTForNet {
             if (!manifest.isSuccess)
                 return new ApkInfo();
 
-            var largestIcon = ApkExtractor.ExtractLargestIcon(path);
+            var apk = ApkParser.Parse(manifest);
+                apk.FullPath = path;
 
-            return ApkParser.Parse(manifest).megre(
-                new ApkInfo() {
-                    FullPath = path,
-                    Icon = largestIcon,
-                }
-            );
+            if (apk.Icon.isImage) {
+                // Included icon in manifest, extract it from apk
+                apk.Icon.RealPath = ApkExtractor.ExtractIconImage(path, apk.Icon);
+            }
+            else {
+                apk.Icon = ApkExtractor.ExtractLargestIcon(path);
+            }
+
+            return apk;
         }
     }
 }
