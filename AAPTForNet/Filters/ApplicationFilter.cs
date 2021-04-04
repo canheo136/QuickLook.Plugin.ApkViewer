@@ -20,7 +20,7 @@ namespace AAPTForNet.Filters {
             return new ApkInfo() {
                 AppName = getValue("label="),
                 Icon = iconName == defaultEmptyValue ?
-                    new Icon() : new Icon(iconName)
+                    Icon.Default : new Icon(iconName)
             };
         }
 

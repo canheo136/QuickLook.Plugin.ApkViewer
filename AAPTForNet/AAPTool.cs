@@ -12,7 +12,7 @@ namespace AAPTForNet {
         private enum DumpTypes {
             Manifest = 0,
             Resources = 1,
-            ManifestTree = 2,
+            XmlTree = 2,
         }
                 
         private static readonly string AppPath = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
@@ -32,13 +32,16 @@ namespace AAPTForNet {
         }
         
         private static DumpModel dump(
-            string path, DumpTypes type, Func<string, int, bool> callback) {
+            string path,
+            string args,
+            DumpTypes type, 
+            Func<string, int, bool> callback) {
 
             int index = 0;
             var terminated = false;
             var msg = string.Empty;
             var aapt = new AAPTool();
-            var output = new List<string>();
+            var output = new List<string>();    // Messages from output stream
 
             switch (type) {
                 case DumpTypes.Manifest:
@@ -47,11 +50,11 @@ namespace AAPTForNet {
                 case DumpTypes.Resources:
                     aapt.Start($"dump --values resources \"{path}\"");
                     break;
-                case DumpTypes.ManifestTree:
-                    aapt.Start($"dump xmltree \"{path}\" AndroidManifest.xml");
+                case DumpTypes.XmlTree:
+                    aapt.Start($"dump xmltree \"{path}\" {args}");
                     break;
-                //default:
-                //    return new DumpModel(path, false, output);
+                default:
+                    return new DumpModel(path, false, output);
             }
 
             while (!aapt.StandardOutput.EndOfStream && !terminated) {
@@ -79,20 +82,28 @@ namespace AAPTForNet {
                 aapt.Dispose();
             }
             catch { }
-            
-            return new DumpModel(path, output.Count > 2, output);
+
+            // Dump xml tree get only 1 message when failed, the others are 2.
+            bool isSuccess = type != DumpTypes.XmlTree ?
+                output.Count > 2 : output.Count > 0;
+            return new DumpModel(path, isSuccess, output);
         }
 
         internal static DumpModel dumpManifest(string path) {
-            return dump(path, DumpTypes.Manifest, (msg, i) => false);
+            return dump(path, string.Empty, DumpTypes.Manifest, (msg, i) => false);
         }
 
         internal static DumpModel dumpResources(string path, Func<string, int, bool> callback) {
-            return dump(path, DumpTypes.Resources, callback);
+            return dump(path, string.Empty, DumpTypes.Resources, callback);
         }
 
-        internal static DumpModel dumpManifestTree(string path, Func<string, int, bool> callback) {
-            return dump(path, DumpTypes.ManifestTree, callback);
+        internal static DumpModel dumpXmlTree(string path, string asset, Func<string, int, bool> callback = null) {
+            callback = callback ?? ((_, __) => false);
+            return dump(path, asset, DumpTypes.XmlTree, callback);
+        }
+
+        internal static DumpModel dumpManifestTree(string path, Func<string, int, bool> callback = null) {
+            return dumpXmlTree(path, "AndroidManifest.xml", callback);
         }
 
         /// <summary>
@@ -111,11 +122,11 @@ namespace AAPTForNet {
             if (apk.Icon.isImage) {
                 // Included icon in manifest, extract it from apk
                 apk.Icon.RealPath = ApkExtractor.ExtractIconImage(path, apk.Icon);
-            }
-            else {
-                apk.Icon = ApkExtractor.ExtractLargestIcon(path);
+                if (apk.Icon.isHighDensity)
+                    return apk;
             }
 
+            apk.Icon = ApkExtractor.ExtractLargestIcon(path);
             return apk;
         }
     }

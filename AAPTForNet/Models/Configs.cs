@@ -2,9 +2,10 @@
     internal enum Configs {
         anydpi = 0,
         mdpi = 1,
-        hdpi = 2,
-        xhdpi = 4,
-        xxhdpi = 8,
-        xxxhdpi = 16,
+        @default = 2,
+        hdpi = 4,
+        xhdpi = 8,
+        xxhdpi = 16,
+        xxxhdpi = 32,
     }
 }

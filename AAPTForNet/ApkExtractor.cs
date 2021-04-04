@@ -1,4 +1,5 @@
 ﻿using AAPTForNet.Models;
+using Detector = AAPTForNet.ResourceDetector;
 
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,55 @@ namespace AAPTForNet {
         /// <param name="path"></param>
         public static Icon ExtractLargestIcon(string path) {
             var iconTable = ExtractIconTable(path);
+
+            if(iconTable.Values.All(i => i.isRefernce)) {
+                var refID = iconTable.Values.FirstOrDefault().IconName;
+                iconTable = ExtractIconTable(path, refID);
+            }
+
+            if (iconTable.Values.All(i => i.isMarkup)) {
+                // Try dumping markup asset and get icon
+                var asset = iconTable.Values.FirstOrDefault().IconName;
+                iconTable = dumpMarkupIcon(path, asset);
+            }
+
             var largestIcon = ExtractLargestIcon(iconTable);
                 largestIcon.RealPath = ExtractIconImage(path, largestIcon);
             return largestIcon;
+        }
+
+        private static Dictionary<string, Icon> dumpMarkupIcon(string path, string asset, int startIndex = -1) {
+            var output = dumpMarkupIcon(path, asset, out startIndex);
+
+            return output.Count == 0 && startIndex < 5
+                ? dumpMarkupIcon(path, asset, startIndex + 1)
+                : output;
+        }
+
+        private static Dictionary<string, Icon> dumpMarkupIcon(
+            string path, string asset, out int lastTryIndex, int start = -1) {
+            // Not found any icon image in package?,
+            // it maybe a markup file
+            // try getting some images from markup.
+            lastTryIndex = -1;
+
+            var tree = AAPTool.dumpXmlTree(path, asset);
+            if (!tree.isSuccess)
+                return new Dictionary<string, Icon>();
+
+            var msg = string.Empty;
+                start = start >= 0 && start < tree.Messages.Count ? start : 0;
+            for (int i = start; i < tree.Messages.Count; i++) {
+                lastTryIndex = i;
+                msg = tree.Messages[i];
+
+                if (Detector.IsBitmapElement(msg)) {
+                    var iconID = tree.Messages[i + 1].Split('@')[1];
+                    return ExtractIconTable(path, iconID);
+                }
+            }
+
+            return new Dictionary<string, Icon>();
         }
 
         private static Dictionary<string, Icon> ExtractIconTable(string path) {
@@ -68,7 +115,7 @@ namespace AAPTForNet {
                 // Dump resources and get icons,
                 // terminate when meet the end of mipmap entry,
                 // icons are in 'drawable' or 'mipmap' resource
-                if (m.Contains(iconID) && !m.Contains("flags"))
+                if (Detector.IsResource(m, iconID))
                     indexes.Add(i);
 
                 if (!matchedEntry) {
@@ -76,7 +123,7 @@ namespace AAPTForNet {
                         matchedEntry = true;    // Begin mipmap entry
                 }
                 else {
-                    if (m.Contains("entry")) {  // Next entry, terminate
+                    if (Detector.IsEntryType(m)) {  // Next entry, terminate
                         matchedEntry = false;
                         return true;
                     }
@@ -100,25 +147,39 @@ namespace AAPTForNet {
             // reverse list and get first elem with LINQ
             var configNames = Enum.GetNames(typeof(Configs)).Reverse();
             var iconTable = new Dictionary<string, Icon>();
-            string msg, iconName, config;
+            Action<string, string> addIcon2Table = (cfg, iconName) => {
+                if (!iconTable.ContainsKey(cfg)) {
+                    iconTable.Add(cfg, new Icon(iconName));
+                }
+            };
+            string msg, resValue, config;
 
             foreach (int index in positions) {
                 for (int i = index; ; i--) {
                     // Go prev to find config
                     msg = messages[i];
 
-                    if (msg.Contains("entry"))  // Out of entry and not found
+                    if (Detector.IsEntryType(msg))  // Out of entry and not found
                         break;
-                    if (msg.Contains("config") && configNames.Any(c => msg.Contains(c))) {
+                    if (Detector.IsConfig(msg)) {
                         // Match with predefined configs,
                         // go next to get icon name
-                        iconName = messages[index + 1]
-                            .Split(seperator)
-                            .FirstOrDefault(n => n.Contains("/"));
+                        resValue = messages[index + 1];
+
                         config = configNames.FirstOrDefault(c => msg.Contains(c));
 
-                        if (!iconTable.ContainsKey(config))
-                            iconTable.Add(config, new Icon(iconName));
+                        if (Detector.IsResourceValue(resValue)) {
+                            // Resource value is icon url
+                            var iconName = resValue.Split(seperator)
+                                .FirstOrDefault(n => n.Contains("/"));
+                            addIcon2Table(config, iconName);
+                            break;
+                        }
+                        if(Detector.IsReference(resValue)) {
+                            var iconID = resValue.Trim().Split(' ')[1];
+                            addIcon2Table(config, iconID);
+                            break;
+                        }
 
                         break;
                     }
@@ -135,7 +196,7 @@ namespace AAPTForNet {
         /// <returns>Absolute path to extracted image</returns>
         public static string ExtractIconImage(string path, Icon icon) {
             if (Icon.Default.Equals(icon))
-                return "markup.xml";    // To use default icon
+                return Icon.DefaultName;
 
             string tempPath = Path.Combine(Path.GetTempPath(), "AAPToolTempImage.png");
             TryExtractIconImage(path, icon.IconName, tempPath);
