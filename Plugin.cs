@@ -9,6 +9,9 @@ using System.Windows;
 
 namespace QuickLook.Plugin.ApkViewer {
     public class Plugin : IViewer {
+
+        private string tempApk = string.Empty;
+
         public int Priority => 0;
 
         public void Init() {}
@@ -22,25 +25,55 @@ namespace QuickLook.Plugin.ApkViewer {
             context.TitlebarBlurVisibility = false;
             context.TitlebarColourVisibility = false;
             context.PreferredSize = new Size { Width = 750, Height = 450 };
+
+            tempApk = createTempApk(path);
         }
 
         public void View(string path, ContextObject context) {
             try {
-                var apk = AAPTool.Decompile(path);
+                var apk = AAPTool.Decompile(tempApk);
                 if (apk.IsEmpty)
                     context.ViewerContent = new ErrorContent();
                 else
                     context.ViewerContent = new ViewerPane(context) { ApkInfo = apk };
             }
             catch(Exception e) {
-                ProcessHelper.WriteLog(e.ToString());
+                ProcessHelper.WriteLog($"{path}\r\n{e.ToString()}");
                 context.ViewerContent = new ErrorContent();
             }
             
             context.IsBusy = false;
         }
 
-        public void Cleanup() { }
+        public void Cleanup() {
+            if (!tempApk.ToLower().EndsWith(".tmp"))
+                return;
+
+            try {
+                File.Delete(tempApk);
+            }
+            catch (Exception e) {
+                ProcessHelper.WriteLog(e.ToString());
+            }
+        }
+
+        private string createTempApk(string sourceFile) {
+            string tempFile = string.Empty;
+            try {
+                tempFile = Path.GetTempFileName();
+            }
+            catch (IOException) {
+                tempFile = Path.Combine(Path.GetTempPath(), $"{nameof(ApkViewer)}.tmp");
+            }
+
+            try {
+                File.Copy(sourceFile, tempFile, true);
+                return tempFile;
+            }
+            catch {
+                return sourceFile;
+            }
+        }
 
         private class ErrorContent : System.Windows.Controls.Label {
             public ErrorContent() {
