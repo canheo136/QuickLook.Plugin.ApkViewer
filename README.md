@@ -1,8 +1,8 @@
-# QuickLook.Plugin.ApkViewer
+# QuickLook.Plugin.ApkViewer  [![GitHub all releases](https://img.shields.io/github/downloads/canheo136/QuickLook.Plugin.ApkViewer/total)](https://github.com/canheo136/QuickLook.Plugin.ApkViewer/releases)
 Android package plugin for [QuickLook](https://github.com/QL-Win/QuickLook), allowing to preview `.apk` file
 <br/>
 <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/36994503/108632546-1cb3c700-74a2-11eb-9c3f-9fc4b0db70a2.png" width=400px>&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/36994503/108632551-1faeb780-74a2-11eb-933e-6948903afd48.png" width=400px>
+    <img src="https://user-images.githubusercontent.com/36994503/119260515-4c877d80-bbfd-11eb-8e74-4a8f2e9fdae7.png" width=400px>    <img src="https://user-images.githubusercontent.com/36994503/119260497-3c6f9e00-bbfd-11eb-9373-2f5649163829.png" width=400px>
 
 ## Download and Installation
 1. Go to [Release page](https://github.com/canheo136/QuickLook.Plugin.ApkViewer/releases) and download the latest version.
