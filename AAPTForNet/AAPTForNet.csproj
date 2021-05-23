@@ -42,6 +42,7 @@
     </Compile>
     <Compile Include="ApkExtractor.cs" />
     <Compile Include="ApkParser.cs" />
+    <Compile Include="Filters\ABIFilter.cs" />
     <Compile Include="Filters\ApplicationFilter.cs" />
     <Compile Include="Filters\BaseFilter.cs" />
     <Compile Include="Filters\PackageFilter.cs" />

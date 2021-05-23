@@ -14,6 +14,7 @@ namespace AAPTForNet {
                 return new ApkInfo();
 
             var filters = new List<BaseFilter>() {
+                new ABIFilter(),
                 new SDKFilter(),
                 new PackageFilter(),
                 new PermissionFilter(),

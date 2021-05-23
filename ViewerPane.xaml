@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:QuickLook.Plugin.ApkViewer"
-             mc:Ignorable="d" d:DesignWidth="450" Height="415" Width="auto" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Center">
+             mc:Ignorable="d" d:DesignWidth="450" Height="auto" Width="auto" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Center">
 
     <UserControl.Resources>
         <SolidColorBrush x:Key="TextForeground" Color="Black"/>
@@ -64,9 +64,11 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Image x:Name="image" Source="{StaticResource DefaultIcon}" Cursor="Hand" Height="210" Width="210" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10"/>
+        <Grid>
+            <Image x:Name="image" Source="{StaticResource DefaultIcon}" Cursor="Hand" Height="210" Width="210" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
 
-        <StackPanel Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0">
+        <StackPanel Name="labels" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0">
             <Label Content="Application name:" Style="{StaticResource StaticLabel}"/>
             <Label Content="Package name:"     Style="{StaticResource StaticLabel}"/>
             <Label Content="Version name:"     Style="{StaticResource StaticLabel}"/>
@@ -74,10 +76,11 @@
             <Label Content="Min SDK:"          Style="{StaticResource StaticLabel}"/>
             <Label Content="Target SDK:"       Style="{StaticResource StaticLabel}"/>
             <Label Content="Support screens:"  Style="{StaticResource StaticLabel}"/>
+            <Label Content="Support ABIs:"     Style="{StaticResource StaticLabel}" Name="lbAbis" />
             <Label Content="Package size:"     Style="{StaticResource StaticLabel}"/>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="5,0,10,0">
+        <StackPanel Name="textboxs" Grid.Column="2" VerticalAlignment="Top" Margin="5,0,10,0">
             <TextBox x:Name="tbAppName"    Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbPckName"    Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbVerName"    Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
@@ -85,6 +88,7 @@
             <TextBox x:Name="tbMinSDK"     Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbTargetSDK"  Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbSupportScr" Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <TextBox x:Name="tbAbis"       Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <TextBox x:Name="tbPckSize"    Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
         </StackPanel>
 

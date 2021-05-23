@@ -37,6 +37,6 @@ using System.Windows;
     //(used if a resource is not found in the page,
     // app, or any theme specific resource dictionaries)
 )]
-[assembly: AssemblyVersion("1.3.1.0")]
-[assembly: AssemblyFileVersion("1.3.1.0")]
+[assembly: AssemblyVersion("1.3.2.0")]
+[assembly: AssemblyFileVersion("1.3.2.0")]
 

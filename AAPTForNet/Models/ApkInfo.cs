@@ -17,6 +17,10 @@ namespace AAPTForNet.Models {
         public SDKInfo MinSDK { get; set; }
         public SDKInfo TargetSDK { get; set; }
         public List<string> Permissions { get; set; }
+        /// <summary>
+        /// Supported application binary interfaces
+        /// </summary>
+        public List<string> SupportedABIs { get; set; }
         public List<string> SupportScreens { get; set; }
         /// <summary>
         /// Size of package, in bytes
@@ -50,6 +54,7 @@ namespace AAPTForNet.Models {
             MinSDK         = SDKInfo.Unknown;
             TargetSDK      = SDKInfo.Unknown;
             Permissions    = new List<string>();
+            SupportedABIs  = new List<string>();
             SupportScreens = new List<string>();
         }
 
@@ -88,6 +93,10 @@ namespace AAPTForNet.Models {
             var perApk = apks.FirstOrDefault(a => a.Permissions.Count > 0);
             if (perApk != null)
                 init.Permissions = perApk.Permissions;
+
+            var abiApk = apks.FirstOrDefault(a => a.SupportedABIs.Count > 0);
+            if (abiApk != null)
+                init.SupportedABIs = abiApk.SupportedABIs;
 
             var scrApk = apks.FirstOrDefault(a => a.SupportScreens.Count > 0);
             if (scrApk != null)

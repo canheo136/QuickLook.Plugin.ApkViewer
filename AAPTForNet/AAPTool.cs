@@ -79,7 +79,6 @@ namespace AAPTForNet {
             try {
                 aapt.WaitForExit();
                 aapt.Close();
-                aapt.Dispose();
             }
             catch { }
 

@@ -61,6 +61,14 @@ namespace QuickLook.Plugin.ApkViewer {
             tbPckSize.Text      = ApkInfo.PackageSize.ToPrettySize(2);
             tbSupportScr.Text   = string.Join(", ", ApkInfo.SupportScreens);
 
+            if(ApkInfo.SupportedABIs.Count == 0) {
+                labels.Children.Remove(lbAbis);
+                textboxs.Children.Remove(tbAbis);
+            }
+            else {
+                tbAbis.Text = string.Join(", ", ApkInfo.SupportedABIs);
+            }
+
             if (ApkInfo.Permissions.Count != 0) {
                 var hoverableStyle = Resources["HoverableLabel"] as Style;
 
