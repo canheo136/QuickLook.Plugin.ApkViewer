@@ -1,15 +1,13 @@
-﻿using AAPTForNet.Models;
-
-using QuickLook.Common.ExtensionMethods;
-using QuickLook.Common.Plugin;
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using AAPTForNet.Models;
+using QuickLook.Common.ExtensionMethods;
+using QuickLook.Common.Plugin;
 
 namespace QuickLook.Plugin.ApkViewer {
 
@@ -27,9 +25,13 @@ namespace QuickLook.Plugin.ApkViewer {
 
         public ViewerPane() {
             InitializeComponent();
+
             btnSwTheme.MouseLeftButtonDown += (sender, e) => {
-                _quickLook.Theme = _quickLook.Theme == Themes.Dark ?
+                var temp = _quickLook.Theme == Themes.Dark ?
                     Themes.Light : Themes.Dark;
+
+                ThemeHelper.Set(temp);
+                _quickLook.Theme = temp;
             };
         }
 
@@ -48,20 +50,20 @@ namespace QuickLook.Plugin.ApkViewer {
                     btnSwTheme.Source = Resources["DarkSwImage"] as BitmapImage;
                 }
             };
-            _quickLook.Theme = Themes.Dark; // Init default theme
+            _quickLook.Theme = ThemeHelper.TryGet();
         }
 
         private void initGUI() {
-            tbAppName.Text      = ApkInfo.AppName;
-            tbPckName.Text      = ApkInfo.PackageName;
-            tbVerName.Text      = ApkInfo.VersionName;
-            tbVerCode.Text      = ApkInfo.VersionCode;
-            tbMinSDK.Text       = ApkInfo.MinSDK.ToString();
-            tbTargetSDK.Text    = ApkInfo.TargetSDK.ToString();
-            tbPckSize.Text      = ApkInfo.PackageSize.ToPrettySize(2);
-            tbSupportScr.Text   = string.Join(", ", ApkInfo.SupportScreens);
+            tbAppName.Text = ApkInfo.AppName;
+            tbPckName.Text = ApkInfo.PackageName;
+            tbVerName.Text = ApkInfo.VersionName;
+            tbVerCode.Text = ApkInfo.VersionCode;
+            tbMinSDK.Text = ApkInfo.MinSDK.ToString();
+            tbTargetSDK.Text = ApkInfo.TargetSDK.ToString();
+            tbPckSize.Text = ApkInfo.PackageSize.ToPrettySize(2);
+            tbSupportScr.Text = string.Join(", ", ApkInfo.SupportScreens);
 
-            if(ApkInfo.SupportedABIs.Count == 0) {
+            if (ApkInfo.SupportedABIs.Count == 0) {
                 labels.Children.Remove(lbAbis);
                 textboxs.Children.Remove(tbAbis);
             }
@@ -87,7 +89,7 @@ namespace QuickLook.Plugin.ApkViewer {
                 };
             }
 
-            if(ApkInfo.Icon.isImage) {
+            if (ApkInfo.Icon.isImage) {
                 var uri = new Uri(ApkInfo.Icon.RealPath);
 
                 image.ToolTip = "Open image";

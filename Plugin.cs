@@ -1,11 +1,9 @@
-﻿using AAPTForNet;
-
-using QuickLook.Common.Helpers;
-using QuickLook.Common.Plugin;
-
-using System;
+﻿using System;
 using System.IO;
 using System.Windows;
+using AAPTForNet;
+using QuickLook.Common.Helpers;
+using QuickLook.Common.Plugin;
 
 namespace QuickLook.Plugin.ApkViewer {
     public class Plugin : IViewer {
@@ -14,7 +12,7 @@ namespace QuickLook.Plugin.ApkViewer {
 
         public int Priority => 0;
 
-        public void Init() {}
+        public void Init() { }
 
         public bool CanHandle(string path) => path.ToLower().EndsWith(".apk");
 
@@ -37,11 +35,11 @@ namespace QuickLook.Plugin.ApkViewer {
                 else
                     context.ViewerContent = new ViewerPane(context) { ApkInfo = apk };
             }
-            catch(Exception e) {
-                ProcessHelper.WriteLog($"{path}\r\n{e.ToString()}");
+            catch (Exception e) {
+                ProcessHelper.WriteLog($"{path}\r\n{e}");
                 context.ViewerContent = new ErrorContent();
             }
-            
+
             context.IsBusy = false;
         }
 
