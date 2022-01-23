@@ -21,7 +21,10 @@ namespace AAPTForNet {
         public static Icon ExtractLargestIcon(string path) {
             var iconTable = ExtractIconTable(path);
 
-            if(iconTable.Values.All(i => i.isRefernce)) {
+            if (iconTable.Count == 0)
+                return Icon.Default;
+
+            if (iconTable.Values.All(i => i.isRefernce)) {
                 var refID = iconTable.Values.FirstOrDefault().IconName;
                 iconTable = ExtractIconTable(path, refID);
             }
@@ -33,7 +36,8 @@ namespace AAPTForNet {
             }
 
             var largestIcon = ExtractLargestIcon(iconTable);
-                largestIcon.RealPath = ExtractIconImage(path, largestIcon);
+            largestIcon.RealPath = ExtractIconImage(path, largestIcon);
+
             return largestIcon;
         }
 
@@ -57,7 +61,7 @@ namespace AAPTForNet {
                 return new Dictionary<string, Icon>();
 
             var msg = string.Empty;
-                start = start >= 0 && start < tree.Messages.Count ? start : 0;
+            start = start >= 0 && start < tree.Messages.Count ? start : 0;
             for (int i = start; i < tree.Messages.Count; i++) {
                 lastTryIndex = i;
                 msg = tree.Messages[i];
@@ -175,7 +179,7 @@ namespace AAPTForNet {
                             addIcon2Table(config, iconName);
                             break;
                         }
-                        if(Detector.IsReference(resValue)) {
+                        if (Detector.IsReference(resValue)) {
                             var iconID = resValue.Trim().Split(' ')[1];
                             addIcon2Table(config, iconID);
                             break;
@@ -207,7 +211,7 @@ namespace AAPTForNet {
             try {
                 ExtractIconImage(path, iconName, desFile);
             }
-            catch(ArgumentException) {}
+            catch (ArgumentException) { }
         }
 
         /// <summary>
@@ -242,7 +246,7 @@ namespace AAPTForNet {
 
             var icon = Icon.Default;
             var configNames = Enum.GetNames(typeof(Configs)).ToList();
-                configNames.Sort(new ConfigComparer());
+            configNames.Sort(new ConfigComparer());
 
             foreach (string cfg in configNames) {
                 // Get the largest icon image, skip markup file (xml)
@@ -255,7 +259,7 @@ namespace AAPTForNet {
 
             return icon ?? Icon.Default;
         }
-        
+
         /// <summary>
         /// DPI config comparer, ordered by desc (largest first)
         /// </summary>
