@@ -111,7 +111,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release (
+    powershell -file "$(SolutionDir)Scripts\pack-zip.ps1"
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>
