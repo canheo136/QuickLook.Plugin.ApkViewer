@@ -2,57 +2,58 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:QuickLook.Plugin.ApkViewer"
-             mc:Ignorable="d" d:DesignWidth="450" Height="auto" Width="auto" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Center">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             Background="{DynamicResource MainWindowBackground}"
+             mc:Ignorable="d" d:DesignWidth="450" FontFamily="Segoe UI">
 
     <UserControl.Resources>
-        <SolidColorBrush x:Key="TextForeground" Color="Black"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/QuickLook.Common;component/Styles/MainWindowStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-        <Style x:Key="CommonStyle" TargetType="Control">
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontFamily" Value="Segoe UI"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
-        </Style>
+            <Style x:Key="CommonStyle" TargetType="Control">
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="Foreground" Value="{DynamicResource WindowTextForeground}"/>
+            </Style>
 
-        <Style x:Key="StaticLabel" TargetType="Label" BasedOn="{StaticResource CommonStyle}">
-            <Setter Property="Width" Value="130"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
+            <Style x:Key="StaticLabel" TargetType="Label" BasedOn="{StaticResource CommonStyle}">
+                <Setter Property="Width" Value="130"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
 
-        <Style x:Key="SelectableLabel" TargetType="TextBox" BasedOn="{StaticResource CommonStyle}">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="SelectionBrush" Value="#007BFF"/>
-            <Setter Property="SelectionOpacity" Value="0.3"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="TextWrapping" Value="NoWrap"/>
-            <Setter Property="IsReadOnly" Value="True"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        </Style>
+            <Style x:Key="SelectableLabel" TargetType="TextBox" BasedOn="{StaticResource CommonStyle}">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="SelectionBrush" Value="#007BFF"/>
+                <Setter Property="SelectionOpacity" Value="0.3"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="TextWrapping" Value="NoWrap"/>
+                <Setter Property="IsReadOnly" Value="True"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            </Style>
 
-        <Style x:Key="HoverableLabel" TargetType="TextBox" BasedOn="{StaticResource SelectableLabel}">
-            <Setter Property="Width" Value="Auto" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FF333333"/>
-                    <Setter Property="Foreground" Value="#FFFFFFFF"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+            <Style x:Key="HoverableLabel" TargetType="TextBox" BasedOn="{StaticResource SelectableLabel}">
+                <Setter Property="Width" Value="Auto" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource CaptionButtonHoverBackground}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource CaptionButtonIconForeground}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
 
-        <BitmapImage x:Key="DarkSwImage"  UriSource="pack://application:,,,/QuickLook.Plugin.ApkViewer;component/images/black_btn.png"/>
-        <BitmapImage x:Key="LightSwImage" UriSource="pack://application:,,,/QuickLook.Plugin.ApkViewer;component/images/white_btn.png"/>
-        <BitmapImage x:Key="DefaultIcon"  UriSource="pack://application:,,,/QuickLook.Plugin.ApkViewer;component/images/default_icon.png"/>
-
+            <BitmapImage x:Key="DefaultIcon"  UriSource="images/default_icon.png"/>
+        </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -65,10 +66,13 @@
         </Grid.ColumnDefinitions>
 
         <Grid>
-            <Image x:Name="image" Source="{StaticResource DefaultIcon}" Cursor="Hand" Height="210" Width="210" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Image x:Name="image" Source="{StaticResource DefaultIcon}"
+                   Cursor="Hand" Height="210" Width="210" 
+                   VerticalAlignment="Center" HorizontalAlignment="Center" />
         </Grid>
 
-        <StackPanel Name="labels" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0">
+        <StackPanel Name="labels" Grid.Column="1" Margin="5,0"
+                    HorizontalAlignment="Left" VerticalAlignment="Top">
             <Label Content="Application name:" Style="{StaticResource StaticLabel}"/>
             <Label Content="Package name:"     Style="{StaticResource StaticLabel}"/>
             <Label Content="Version name:"     Style="{StaticResource StaticLabel}"/>
@@ -92,14 +96,40 @@
             <TextBox x:Name="tbPckSize"    Text="..." Width="auto" Style="{StaticResource SelectableLabel}" MouseDoubleClick="SelectableLabel_MouseDoubleClick" VerticalAlignment="Center" HorizontalAlignment="Left"/>
         </StackPanel>
 
-        <Image x:Name="btnSwTheme" Height="20" Width="20" Source="{StaticResource DarkSwImage}" Cursor="Hand" ToolTip="Switch theme" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"/>
+        <Image x:Name="btnSwTheme" Height="20" Width="20" Margin="10"
+               Cursor="Hand" ToolTip="Switch theme" Grid.Column="3"
+               HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Image.Style>
+                <Style>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=ViewerPanel,Path=Theme}" Value="Light">
+                            <!-- Black image on light theme -->
+                            <Setter Property="Image.Source">
+                                <Setter.Value>
+                                    <BitmapImage UriSource="images/black_btn.png" />
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ElementName=ViewerPanel,Path=Theme}" Value="Dark">
+                            <Setter Property="Image.Source">
+                                <Setter.Value>
+                                    <BitmapImage UriSource="images/white_btn.png" />
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Image.Style>
+        </Image>
 
-        <GroupBox x:Name="panelPermission" Header="Permissions" BorderBrush="{DynamicResource TextForeground}" Foreground="{DynamicResource TextForeground}" BorderThickness="1" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4" Margin="10" Height="150" VerticalAlignment="Top">
+        <GroupBox x:Name="panelPermission" Header="Permissions" VerticalAlignment="Top"
+                  BorderBrush="{DynamicResource WindowTextForeground}" 
+                  Foreground="{DynamicResource WindowTextForeground}" 
+                  BorderThickness="1" Margin="10" Height="150" 
+                  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4">
             <ScrollViewer Focusable="False">
                 <StackPanel x:Name="permissionStack"/>
             </ScrollViewer>
         </GroupBox>
-
     </Grid>
-
 </UserControl>

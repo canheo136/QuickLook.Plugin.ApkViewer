@@ -18,10 +18,6 @@ namespace QuickLook.Plugin.ApkViewer {
 
         public void Prepare(string path, ContextObject context) {
             context.Title = Path.GetFileName(path);
-            context.TitlebarOverlap = false;
-            context.FullWindowDragging = true;
-            context.TitlebarBlurVisibility = false;
-            context.TitlebarColourVisibility = false;
             context.PreferredSize = new Size { Width = 750, Height = 450 };
 
             tempApk = createTempApk(path);
