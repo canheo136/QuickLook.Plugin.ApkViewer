@@ -10,15 +10,15 @@ namespace AAPTForNet.Filters {
 
         private string msg = string.Empty;
 
-        public override bool canHandle(string msg) {
+        public override bool CanHandle(string msg) {
             return msg.StartsWith("supports-screens:");
         }
 
-        public override void addMessage(string msg) {
+        public override void AddMessage(string msg) {
             this.msg = msg;
         }
 
-        public override ApkInfo getAPK() {
+        public override ApkInfo GetAPK() {
             var apk = new ApkInfo();
 
             if (msg.Contains(SmallScreen))
@@ -33,6 +33,8 @@ namespace AAPTForNet.Filters {
             return apk;
         }
 
-        public override void clear() => msg = string.Empty;
+        public override void Clear() {
+            msg = string.Empty;
+        }
     }
 }

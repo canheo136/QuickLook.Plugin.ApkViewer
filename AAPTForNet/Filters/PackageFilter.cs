@@ -5,15 +5,15 @@ namespace AAPTForNet.Filters {
 
         private string[] segments = new string[] { };
 
-        public override bool canHandle(string msg) {
+        public override bool CanHandle(string msg) {
             return msg.StartsWith("package:");
         }
 
-        public override void addMessage(string msg) {
+        public override void AddMessage(string msg) {
             segments = msg.Split(seperator);
         }
 
-        public override ApkInfo getAPK() {
+        public override ApkInfo GetAPK() {
             return new ApkInfo() {
                 PackageName = getValueOrDefault("package"),
                 VersionName = getValueOrDefault("versionName"),
@@ -21,7 +21,7 @@ namespace AAPTForNet.Filters {
             };
         }
 
-        public override void clear() => segments = new string[] { };
+        public override void Clear() => segments = new string[] { };
 
         private string getValueOrDefault(string key) {
             string output = string.Empty;

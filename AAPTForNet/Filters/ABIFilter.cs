@@ -11,19 +11,19 @@ namespace AAPTForNet.Filters {
 
         private string[] segments = new string[] { };
 
-        public override bool canHandle(string msg)
+        public override bool CanHandle(string msg)
             => msg.StartsWith("native-code:");
 
-        public override void addMessage(string msg) {
+        public override void AddMessage(string msg) {
             segments = msg.Split(new char[2] { ' ', '\'' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public override ApkInfo getAPK() {
+        public override ApkInfo GetAPK() {
             return new ApkInfo() {
                 SupportedABIs = segments.Skip(1).ToList()   // Skip "native-code"
             };
         }
 
-        public override void clear() => throw new NotImplementedException();
+        public override void Clear() => throw new NotImplementedException();
     }
 }

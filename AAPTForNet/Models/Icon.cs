@@ -20,17 +20,17 @@ namespace AAPTForNet.Models {
         /// <summary>
         /// Determines whether icon of package is an image
         /// </summary>
-        public bool isImage => !DefaultName.Equals(IconName) && !isMarkup;
+        public bool IsImage => !DefaultName.Equals(IconName) && !IsMarkup;
 
-        internal bool isMarkup => this.IconName
+        internal bool IsMarkup => IconName
             .EndsWith(".xml", StringComparison.OrdinalIgnoreCase);
 
         // Not real icon, it refer to another
-        internal bool isRefernce => this.IconName.StartsWith("0x");
+        internal bool IsRefernce => IconName.StartsWith("0x");
 
-        internal bool isHighDensity {
+        internal bool IsHighDensity {
             get {
-                if (!this.isImage || !File.Exists(RealPath))
+                if (!IsImage || !File.Exists(RealPath))
                     return false;
 
                 try {
@@ -56,19 +56,23 @@ namespace AAPTForNet.Models {
         internal Icon() => throw new NotImplementedException();
 
         internal Icon(string iconName) {
-            this.IconName = iconName;
-            this.RealPath = string.Empty;
+            IconName = iconName;
+            RealPath = string.Empty;
         }
 
-        public override string ToString() => this.IconName;
+        public override string ToString() {
+            return IconName;
+        }
 
         public override bool Equals(object obj) {
-            if(obj is Icon ic) {
-                return this.IconName == ic.IconName;
+            if (obj is Icon ic) {
+                return IconName == ic.IconName;
             }
             return false;
         }
 
-        public override int GetHashCode() => -489061483 + EqualityComparer<string>.Default.GetHashCode(this.IconName);
+        public override int GetHashCode() {
+            return -489061483 + EqualityComparer<string>.Default.GetHashCode(IconName);
+        }
     }
 }

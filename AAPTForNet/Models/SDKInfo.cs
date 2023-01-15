@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace AAPTForNet.Models
-{
-    public class SDKInfo
-    {
+namespace AAPTForNet.Models {
+    public class SDKInfo {
         internal static readonly SDKInfo Unknown = new SDKInfo("0", "0", "0");
 
         // https://source.android.com/setup/start/build-numbers
@@ -85,46 +83,42 @@ namespace AAPTForNet.Models
         public string Version { get; }
         public string CodeName { get; }
 
-        protected SDKInfo(string level, string ver, string code)
-        {
-            this.APILever = level;
-            this.Version = ver;
-            this.CodeName = code;
+        protected SDKInfo(string level, string ver, string code) {
+            APILever = level;
+            Version = ver;
+            CodeName = code;
         }
 
-        public static SDKInfo GetInfo(int sdkVer)
-        {
-            int index = (sdkVer < 1 || sdkVer > AndroidCodeNames.Length - 1) ? 0 : sdkVer;
+        public static SDKInfo GetInfo(int sdkVer) {
+            var index = (sdkVer < 1 || sdkVer > AndroidCodeNames.Length - 1) ? 0 : sdkVer;
 
             return new SDKInfo(sdkVer.ToString(),
                 AndroidVersionCodes[index], AndroidCodeNames[index]);
         }
 
-        public static SDKInfo GetInfo(string sdkVer)
-        {
-            int.TryParse(sdkVer, out int ver);
+        public static SDKInfo GetInfo(string sdkVer) {
+            int.TryParse(sdkVer, out var ver);
             return GetInfo(ver);
         }
 
-        public override int GetHashCode() => 1008763889 + EqualityComparer<string>.Default.GetHashCode(this.APILever);
+        public override int GetHashCode() {
+            return 1008763889 + EqualityComparer<string>.Default.GetHashCode(APILever);
+        }
 
-        public override bool Equals(object obj)
-        {
-            if (obj is SDKInfo another)
-            {
-                return this.APILever == another.APILever;
+        public override bool Equals(object obj) {
+            if (obj is SDKInfo another) {
+                return APILever == another.APILever;
             }
             return false;
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             if (APILever.Equals("0") && Version.Equals("0") && CodeName.Equals("0"))
                 return AndroidCodeNames[0];
 
-            return $"API Level {this.APILever} " +
-                $"{(this.Version == AndroidCodeNames[0] ? $"({AndroidCodeNames[0]} - " : $"(Android {this.Version} - ")}" +
-                $"{this.CodeName})";
+            return $"API Level {APILever} " +
+                $"{(Version == AndroidCodeNames[0] ? $"({AndroidCodeNames[0]} - " : $"(Android {Version} - ")}" +
+                $"{CodeName})";
         }
     }
 }

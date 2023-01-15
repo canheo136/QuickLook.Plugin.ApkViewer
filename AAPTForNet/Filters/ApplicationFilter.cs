@@ -5,30 +5,32 @@ namespace AAPTForNet.Filters {
 
         private string[] segments = new string[] { };
 
-        public override bool canHandle(string msg) {
+        public override bool CanHandle(string msg) {
             return msg.StartsWith("application:");
         }
 
-        public override void addMessage(string msg = "") {
+        public override void AddMessage(string msg = "") {
             segments = msg.Split(seperator);
         }
 
-        public override ApkInfo getAPK() {
+        public override ApkInfo GetAPK() {
             // Try getting icon name from manifest, may be an image
-            string iconName = getValue("icon=");
+            string iconName = GetValue("icon=");
 
             return new ApkInfo() {
-                AppName = getValue("label="),
+                AppName = GetValue("label="),
                 Icon = iconName == defaultEmptyValue ?
                     Icon.Default : new Icon(iconName)
             };
         }
 
-        public override void clear() => segments = new string[] { };
-        
-        private string getValue(string key) {
+        public override void Clear() {
+            segments = new string[] { };
+        }
+
+        private string GetValue(string key) {
             string output = string.Empty;
-            for(int i = 0; i < segments.Length; i++) {
+            for (int i = 0; i < segments.Length; i++) {
                 if (segments[i].Contains(key)) {
                     output = segments[++i];
                     break;

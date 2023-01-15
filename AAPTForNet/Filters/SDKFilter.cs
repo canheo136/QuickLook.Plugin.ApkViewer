@@ -1,42 +1,43 @@
-﻿using AAPTForNet.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AAPTForNet.Models;
 
 namespace AAPTForNet.Filters {
     internal class SDKFilter : BaseFilter {
 
         private List<string> msgs = new List<string>();
-        private string[] segments => String.Join(" ", msgs).Split(seperator);
+        private string[] segments => string.Join(" ", msgs).Split(seperator);
 
-        public override bool canHandle(string msg) {
+        public override bool CanHandle(string msg) {
             return msg.StartsWith("sdkVersion:") || msg.StartsWith("targetSdkVersion:");
         }
 
-        public override void addMessage(string msg) {
+        public override void AddMessage(string msg) {
             if (!msgs.Contains(msg)) {
                 msgs.Add(msg);
             }
         }
 
-        public override ApkInfo getAPK() {
+        public override ApkInfo GetAPK() {
             return new ApkInfo() {
-                MinSDK = SDKInfo.GetInfo(getMinSDKVersion()),
-                TargetSDK = SDKInfo.GetInfo(getTargetSDKVersion())
+                MinSDK = SDKInfo.GetInfo(GetMinSDKVersion()),
+                TargetSDK = SDKInfo.GetInfo(GetTargetSDKVersion())
             };
         }
 
-        public override void clear() => msgs.Clear();
+        public override void Clear() {
+            msgs.Clear();
+        }
 
-        private string getMinSDKVersion() {
-            for(int i = 0; i < segments.Length; i++) {
+        private string GetMinSDKVersion() {
+            for (int i = 0; i < segments.Length; i++) {
                 if (segments[i].Contains("sdkVersion"))
                     return segments[++i];
             }
             return string.Empty;
         }
 
-        private string getTargetSDKVersion() {
-            for (int i = 0; i < segments.Length; i++) {
+        private string GetTargetSDKVersion() {
+            for (var i = 0; i < segments.Length; i++) {
                 if (segments[i].Contains("targetSdkVersion"))
                     return segments[++i];
             }

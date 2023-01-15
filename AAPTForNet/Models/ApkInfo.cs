@@ -38,27 +38,23 @@ namespace AAPTForNet.Models {
         /// <summary>
         /// Determines whether this package is filled or not
         /// </summary>
-        public bool IsEmpty {
-            get {
-                return AppName == string.Empty && PackageName == string.Empty;
-            }
-        }
-        
+        public bool IsEmpty => AppName == string.Empty && PackageName == string.Empty;
+
         internal ApkInfo() {
-            AppName        = string.Empty;
-            PackageName    = string.Empty;
-            VersionName    = string.Empty;
-            VersionCode    = string.Empty;
-            FullPath       = string.Empty;
-            Icon           = Icon.Default;
-            MinSDK         = SDKInfo.Unknown;
-            TargetSDK      = SDKInfo.Unknown;
-            Permissions    = new List<string>();
-            SupportedABIs  = new List<string>();
+            AppName = string.Empty;
+            PackageName = string.Empty;
+            VersionName = string.Empty;
+            VersionCode = string.Empty;
+            FullPath = string.Empty;
+            Icon = Icon.Default;
+            MinSDK = SDKInfo.Unknown;
+            TargetSDK = SDKInfo.Unknown;
+            Permissions = new List<string>();
+            SupportedABIs = new List<string>();
             SupportScreens = new List<string>();
         }
 
-        internal ApkInfo megre(params ApkInfo[] apks) {
+        internal ApkInfo Megre(params ApkInfo[] apks) {
             if (apks.Any(a => a == null))
                 throw new ArgumentNullException();
 

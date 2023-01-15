@@ -1,17 +1,16 @@
-﻿using AAPTForNet.Models;
-using Detector = AAPTForNet.ResourceDetector;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using AAPTForNet.Models;
+using Detector = AAPTForNet.ResourceDetector;
 
 namespace AAPTForNet {
     internal class ApkExtractor {
 
         public static DumpModel ExtractManifest(string path) {
-            return AAPTool.dumpManifest(path);
+            return AAPTool.DumpManifest(path);
         }
 
         /// <summary>
@@ -24,15 +23,15 @@ namespace AAPTForNet {
             if (iconTable.Count == 0)
                 return Icon.Default;
 
-            if (iconTable.Values.All(i => i.isRefernce)) {
+            if (iconTable.Values.All(i => i.IsRefernce)) {
                 var refID = iconTable.Values.FirstOrDefault().IconName;
                 iconTable = ExtractIconTable(path, refID);
             }
 
-            if (iconTable.Values.All(i => i.isMarkup)) {
+            if (iconTable.Values.All(i => i.IsMarkup)) {
                 // Try dumping markup asset and get icon
                 var asset = iconTable.Values.FirstOrDefault().IconName;
-                iconTable = dumpMarkupIcon(path, asset);
+                iconTable = DumpMarkupIcon(path, asset);
             }
 
             var largestIcon = ExtractLargestIcon(iconTable);
@@ -41,23 +40,23 @@ namespace AAPTForNet {
             return largestIcon;
         }
 
-        private static Dictionary<string, Icon> dumpMarkupIcon(string path, string asset, int startIndex = -1) {
-            var output = dumpMarkupIcon(path, asset, out startIndex);
+        private static Dictionary<string, Icon> DumpMarkupIcon(string path, string asset, int startIndex = -1) {
+            var output = DumpMarkupIcon(path, asset, out startIndex);
 
             return output.Count == 0 && startIndex < 5
-                ? dumpMarkupIcon(path, asset, startIndex + 1)
+                ? DumpMarkupIcon(path, asset, startIndex + 1)
                 : output;
         }
 
-        private static Dictionary<string, Icon> dumpMarkupIcon(
+        private static Dictionary<string, Icon> DumpMarkupIcon(
             string path, string asset, out int lastTryIndex, int start = -1) {
             // Not found any icon image in package?,
             // it maybe a markup file
             // try getting some images from markup.
             lastTryIndex = -1;
 
-            var tree = AAPTool.dumpXmlTree(path, asset);
-            if (!tree.isSuccess)
+            var tree = AAPTool.DumpXmlTree(path, asset);
+            if (!tree.IsSuccess)
                 return new Dictionary<string, Icon>();
 
             var msg = string.Empty;
@@ -87,7 +86,7 @@ namespace AAPTForNet {
         /// <returns>icon id</returns>
         private static string ExtractIconID(string path) {
             int iconIndex = 0;
-            var manifestTree = AAPTool.dumpManifestTree(
+            var manifestTree = AAPTool.DumpManifestTree(
                 path,
                 (m, i) => {
                     if (m.Contains("android:icon")) {
@@ -101,7 +100,7 @@ namespace AAPTForNet {
             if (iconIndex == 0) // Package without launcher icon
                 return string.Empty;
 
-            if (manifestTree.isSuccess) {
+            if (manifestTree.IsSuccess) {
                 string msg = manifestTree.Messages[iconIndex];
                 return msg.Split('@')[1];
             }
@@ -115,7 +114,7 @@ namespace AAPTForNet {
 
             var matchedEntry = false;
             var indexes = new List<int>();  // Get position of icon in resource list
-            var resTable = AAPTool.dumpResources(path, (m, i) => {
+            var resTable = AAPTool.DumpResources(path, (m, i) => {
                 // Dump resources and get icons,
                 // terminate when meet the end of mipmap entry,
                 // icons are in 'drawable' or 'mipmap' resource
@@ -135,13 +134,13 @@ namespace AAPTForNet {
                 return false;
             });
 
-            return createIconTable(indexes, resTable.Messages);
+            return CreateIconTable(indexes, resTable.Messages);
         }
 
         // Create table like below
         //  configs  |    mdpi           hdpi    ...    anydpi
         //  icon     |    icon1          icon2   ...    icon4
-        private static Dictionary<string, Icon> createIconTable(List<int> positions, List<string> messages) {
+        private static Dictionary<string, Icon> CreateIconTable(List<int> positions, List<string> messages) {
             if (positions.Count == 0 || messages.Count <= 2)    // If dump failed
                 return new Dictionary<string, Icon>();
 

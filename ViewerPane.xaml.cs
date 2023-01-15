@@ -106,7 +106,7 @@ namespace QuickLook.Plugin.ApkViewer {
                 };
             }
 
-            if (ApkInfo.Icon.isImage) {
+            if (ApkInfo.Icon.IsImage) {
                 var uri = new Uri(ApkInfo.Icon.RealPath);
 
                 image.ToolTip = "Open image";

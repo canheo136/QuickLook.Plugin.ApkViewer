@@ -1,8 +1,7 @@
-﻿using AAPTForNet.Models;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using AAPTForNet.Models;
 
 namespace AAPTForNet {
     /// <summary>
@@ -14,27 +13,27 @@ namespace AAPTForNet {
             Resources = 1,
             XmlTree = 2,
         }
-                
+
         private static readonly string AppPath = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
 
         protected AAPTool() {
-            this.StartInfo.FileName = AppPath + @"\tool\aapt.exe";
-            this.StartInfo.CreateNoWindow = true;
-            this.StartInfo.UseShellExecute = false; // For read output data
-            this.StartInfo.RedirectStandardError = true;
-            this.StartInfo.RedirectStandardOutput = true;
-            this.StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding("utf-8");
+            StartInfo.FileName = AppPath + @"\tool\aapt.exe";
+            StartInfo.CreateNoWindow = true;
+            StartInfo.UseShellExecute = false; // For read output data
+            StartInfo.RedirectStandardError = true;
+            StartInfo.RedirectStandardOutput = true;
+            StartInfo.StandardOutputEncoding = System.Text.Encoding.GetEncoding("utf-8");
         }
 
         protected new bool Start(string args) {
-            this.StartInfo.Arguments = args;
+            StartInfo.Arguments = args;
             return base.Start();
         }
-        
-        private static DumpModel dump(
+
+        private static DumpModel Dump(
             string path,
             string args,
-            DumpTypes type, 
+            DumpTypes type,
             Func<string, int, bool> callback) {
 
             int index = 0;
@@ -59,7 +58,7 @@ namespace AAPTForNet {
 
             while (!aapt.StandardOutput.EndOfStream && !terminated) {
                 msg = aapt.StandardOutput.ReadLine();
-                
+
                 if (callback(msg, index)) {
                     terminated = true;
                     try {
@@ -88,21 +87,21 @@ namespace AAPTForNet {
             return new DumpModel(path, isSuccess, output);
         }
 
-        internal static DumpModel dumpManifest(string path) {
-            return dump(path, string.Empty, DumpTypes.Manifest, (msg, i) => false);
+        internal static DumpModel DumpManifest(string path) {
+            return Dump(path, string.Empty, DumpTypes.Manifest, (msg, i) => false);
         }
 
-        internal static DumpModel dumpResources(string path, Func<string, int, bool> callback) {
-            return dump(path, string.Empty, DumpTypes.Resources, callback);
+        internal static DumpModel DumpResources(string path, Func<string, int, bool> callback) {
+            return Dump(path, string.Empty, DumpTypes.Resources, callback);
         }
 
-        internal static DumpModel dumpXmlTree(string path, string asset, Func<string, int, bool> callback = null) {
+        internal static DumpModel DumpXmlTree(string path, string asset, Func<string, int, bool> callback = null) {
             callback = callback ?? ((_, __) => false);
-            return dump(path, asset, DumpTypes.XmlTree, callback);
+            return Dump(path, asset, DumpTypes.XmlTree, callback);
         }
 
-        internal static DumpModel dumpManifestTree(string path, Func<string, int, bool> callback = null) {
-            return dumpXmlTree(path, "AndroidManifest.xml", callback);
+        internal static DumpModel DumpManifestTree(string path, Func<string, int, bool> callback = null) {
+            return DumpXmlTree(path, "AndroidManifest.xml", callback);
         }
 
         /// <summary>
@@ -112,16 +111,16 @@ namespace AAPTForNet {
         /// <returns>Filled apk if dump process is not failed</returns>
         public static ApkInfo Decompile(string path) {
             var manifest = ApkExtractor.ExtractManifest(path);
-            if (!manifest.isSuccess)
+            if (!manifest.IsSuccess)
                 return new ApkInfo();
 
             var apk = ApkParser.Parse(manifest);
-                apk.FullPath = path;
+            apk.FullPath = path;
 
-            if (apk.Icon.isImage) {
+            if (apk.Icon.IsImage) {
                 // Included icon in manifest, extract it from apk
                 apk.Icon.RealPath = ApkExtractor.ExtractIconImage(path, apk.Icon);
-                if (apk.Icon.isHighDensity)
+                if (apk.Icon.IsHighDensity)
                     return apk;
             }
 

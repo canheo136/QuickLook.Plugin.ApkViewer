@@ -1,8 +1,7 @@
-﻿using AAPTForNet.Filters;
-using AAPTForNet.Models;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using AAPTForNet.Filters;
+using AAPTForNet.Models;
 
 namespace AAPTForNet {
     /// <summary>
@@ -10,7 +9,7 @@ namespace AAPTForNet {
     /// </summary>
     internal class ApkParser {
         public static ApkInfo Parse(DumpModel model) {
-            if (!model.isSuccess)
+            if (!model.IsSuccess)
                 return new ApkInfo();
 
             var filters = new List<BaseFilter>() {
@@ -22,16 +21,16 @@ namespace AAPTForNet {
                 new ApplicationFilter()
             };
 
-            foreach(string msg in model.Messages) {
-                foreach(var f in filters) {
-                    if (f.canHandle(msg)) {
-                        f.addMessage(msg);
+            foreach (string msg in model.Messages) {
+                foreach (var f in filters) {
+                    if (f.CanHandle(msg)) {
+                        f.AddMessage(msg);
                         break;
                     }
                 }
             }
 
-            return ApkInfo.Merge(filters.Select(f => f.getAPK()));
+            return ApkInfo.Merge(filters.Select(f => f.GetAPK()));
         }
     }
 }
