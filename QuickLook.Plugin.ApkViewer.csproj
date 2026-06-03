@@ -59,6 +59,10 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="QuickLook.Common, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\QuickLook.Common.4.5.0\lib\net462\QuickLook.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -81,13 +85,9 @@
       <Project>{22aa131d-dba0-445c-b790-fdfd951a1655}</Project>
       <Name>AAPTForNet</Name>
     </ProjectReference>
-    <ProjectReference Include="QuickLook.Common\QuickLook.Common.csproj">
-      <Project>{85fdd6ba-871d-46c8-bd64-f6bb0cb5ea95}</Project>
-      <Name>QuickLook.Common</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="QuickLook.Plugin.Metadata.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
