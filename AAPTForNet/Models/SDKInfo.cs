@@ -4,7 +4,7 @@ namespace AAPTForNet.Models {
     public class SDKInfo {
         internal static readonly SDKInfo Unknown = new SDKInfo("0", "0", "0");
 
-        // https://source.android.com/setup/start/build-numbers
+        // https://apilevels.com/
         private static readonly string[] AndroidCodeNames = {
             "Unknown",
             "Unnamed",  // API level 1
@@ -26,7 +26,7 @@ namespace AAPTForNet.Models {
             "Jelly Bean",
             "Jelly Bean",
             "KitKat",
-            "Unknown",  // API level 20
+            "KitKat",  // API level 20
             "Lollipop",
             "Lollipop",
             "Marshmallow",
@@ -35,13 +35,18 @@ namespace AAPTForNet.Models {
             "Oreo",
             "Oreo",
             "Pie",
-            "Android10",
-            "Android11", // API level 30
-            "Android12",
-            "Android12L",
-            "Android13"
+            "Quince Tart",
+            "Red Velvet Cake", // API level 30
+            "Snow Cone",
+            "Snow Cone",
+            "Tiramisu",
+            "Upside Down Cake",
+            "Vanilla Ice Cream",
+            "Baklava",
+            "Cinnamon Bun",
         };
 
+        // https://source.android.com/setup/start/build-numbers
         private static readonly string[] AndroidVersionCodes = {
             "Unknown",
             "1.0",  // API level 1
@@ -76,7 +81,11 @@ namespace AAPTForNet.Models {
             "11",    // API level 30
             "12",
             "12",
-            "13"
+            "13",
+            "14",
+            "15",
+            "16",
+            "16",
         };
 
         public string APILever { get; }
